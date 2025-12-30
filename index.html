@@ -3,303 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Жаңа Жыл Саяхаты Құттықтауы</title>
+    <title>Global New Year Wish</title>
     
-    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ffffff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="theme-color" content="#d32f2f">
+    <link rel="icon" type="image/png" href="icon-192.png">
 
-    <!-- Конфетти -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         body {
-            margin: 0;
-            padding: 20px;
+            margin: 0; padding: 20px;
             min-height: 100vh;
-            background: url('https://wallpaperaccess.com/full/124383.jpg') no-repeat center center fixed;
-            background-size: cover;
+            background: linear-gradient(135deg, #141E30, #243B55);
             color: white;
             text-align: center;
-            overflow: hidden;
-            position: relative;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
+        /* Қар жауу эффектісі */
         body::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://i.pinimg.com/originals/1f/fa/c5/1ffac5f8688570a8cbdd049c54e7a1d2.gif') no-repeat center center;
-            background-size: cover;
-            opacity: 0.4;
-            z-index: -1;
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://library.kissclipart.com/20180904/ese/kissclipart-falling-snow-png-clipart-snow-clip-art-4c1b525046522064.png');
+            animation: snow 20s linear infinite;
+            opacity: 0.3; pointer-events: none; z-index: -1;
         }
-        h1 {
-            font-size: 32px;
-            color: #ffeb3b;
-            text-shadow: 3px 3px 6px #000;
-            margin-bottom: 10px;
-        }
-        .greeting {
-            font-size: 24px;
-            color: #fff;
-            background: rgba(0, 0, 50, 0.7);
+        @keyframes snow { from { background-position: 0 0; } to { background-position: 0 500px; } }
+
+        h1 { color: #ffeb3b; text-shadow: 2px 2px 5px #000; font-size: 2rem; margin-bottom: 0.5em;}
+        
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             padding: 25px;
-            margin: 30px auto;
-            max-width: 90%;
             border-radius: 20px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-            text-shadow: 1px 1px 3px #000;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            max-width: 500px;
+            width: 100%;
+            transition: transform 0.3s;
         }
-        .time-info {
-            font-size: 20px;
-            color: #ffeb3b;
-            margin: 15px;
-            text-shadow: 2px 2px 4px #000;
-            font-weight: bold;
+        .card:hover { transform: translateY(-5px); }
+
+        input, select, button {
+            width: 80%; padding: 12px; margin: 10px 0;
+            border-radius: 10px; border: none; font-size: 16px;
         }
         button {
-            background: #d32f2f;
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            font-size: 20px;
-            border-radius: 15px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-            transition: 0.3s;
+            background: #ff5722; color: white; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+            transition: 0.2s;
         }
-        button:hover { transform: scale(1.05); }
-        #nextBtn {
-            background: #4caf50;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        select, input {
-            padding: 12px;
-            font-size: 18px;
-            margin: 15px;
+        button:active { transform: scale(0.95); }
+        button.secondary { background: #009688; }
+        
+        .hidden { display: none; }
+        
+        .city-title { color: #4dd0e1; font-size: 1.5rem; margin-top: 0;}
+        .greeting-text { font-size: 1.1rem; margin: 15px 0; }
+        
+        /* Өлеңге арналған стиль */
+        .poem-box {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
             border-radius: 10px;
-            border: none;
-            width: 80%;
-            max-width: 320px;
+            margin: 15px 0;
+            font-style: italic;
+            line-height: 1.6;
+            color: #fffde7;
+            border-left: 4px solid #ffeb3b;
+            white-space: pre-line; /* Өлең жолдарын сақтау үшін */
         }
-        .city { display: none; }
 
-        /* Қар түсіру */
-        .snowflake {
-            position: absolute;
-            color: white;
-            font-size: 20px;
-            pointer-events: none;
-            animation: fall linear infinite, sway 2s ease-in-out infinite;
-            opacity: 0.9;
-        }
-        @keyframes fall { to { transform: translateY(100vh); } }
-        @keyframes sway { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(20px); } }
+        .time-display { font-family: monospace; font-size: 1.2rem; color: #ffeb3b; background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px; display: inline-block; margin-bottom: 15px;}
+        
+        #shareLink { font-size: 12px; color: #aaa; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <h1 data-lang="kk">Жаңа Жылмен! Әлемдік Саяхат Құттықтауы 🎄✨🎉</h1>
-    <h1 data-lang="ru" style="display:none;">С Новым Годом! Мировое Путешествие Поздравления 🎄✨🎉</h1>
-    <h1 data-lang="en" style="display:none;">Happy New Year! World Travel Greeting 🎄✨🎉</h1>
-    <h1 data-lang="ar" style="display:none;">عام سعيد! تهنئة سفر عالمية 🎄✨🎉</h1>
-    <h1 data-lang="mn" style="display:none;">Шинэ оны мэнд! Дэлхийн аялалын мэндчилгээ 🎄✨🎉</h1>
-
-    <p data-lang="kk">Атыңызды енгізіп, тілді таңдаңыз да, әлемдік саяхатты бастаңыз!</p>
-    <p data-lang="ru" style="display:none;">Введите имя, выберите язык и начните мировое путешествие!</p>
-    <p data-lang="en" style="display:none;">Enter your name, choose language and start the world journey!</p>
-    <p data-lang="ar" style="display:none;">أدخل اسمك، اختر اللغة وبدء الرحلة العالمية!</p>
-    <p data-lang="mn" style="display:none;">Нэрээ оруулна уу, хэл сонгоод дэлхийн аялалаа эхлүүл!</p>
-
-    <select id="language" onchange="changeLanguage()">
-        <option value="kk">Қазақ</option>
-        <option value="ru">Русский</option>
-        <option value="en">English</option>
-        <option value="ar">العربية</option>
-        <option value="mn">Монгол</option>
-    </select>
-
-    <form id="form">
-        <label data-lang="kk">Атыңыз:</label><br>
-        <input type="text" id="name" placeholder="Мысалы: Айша, Нұрлан" required><br>
-        <button type="button" onclick="startJourney()">Бастау 🎉</button>
-    </form>
-
-    <div id="timeInfo" class="time-info" style="display:none;"></div>
-
-    <div id="cities">
-        <!-- 1. Алматы -->
-        <div class="city" data-timezone="Asia/Almaty">
-            <h2 data-lang="kk">Алматы, Қазақстан</h2>
-            <h2 data-lang="ru" style="display:none;">Алматы, Казахстан</h2>
-            <h2 data-lang="en" style="display:none;">Almaty, Kazakhstan</h2>
-            <h2 data-lang="ar" style="display:none;">ألماتي، كازاخستان</h2>
-            <h2 data-lang="mn" style="display:none;">Алматы, Казахстан</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Алматыда шырша астында бақытқа толы жыл тілеймін! 🎄❤️</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Под елкой в Алматы желаю счастья! 🎄❤️</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! Under the tree in Almaty, I wish you happiness! 🎄❤️</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! تحت الشجرة في ألماتي أتمنى لك السعادة! 🎄❤️</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Алматыд модны доор аз жаргалтай жил хүсье! 🎄❤️</p>
-        </div>
-
-        <!-- 2. Нью-Йорк -->
-        <div class="city" data-timezone="America/New_York">
-            <h2 data-lang="kk">Нью-Йорк, АҚШ</h2>
-            <h2 data-lang="ru" style="display:none;">Нью-Йорк, США</h2>
-            <h2 data-lang="en" style="display:none;">New York, USA</h2>
-            <h2 data-lang="ar" style="display:none;">نيويورك، الولايات المتحدة</h2>
-            <h2 data-lang="mn" style="display:none;">Нью-Йорк, АНУ</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Таймс-Скверде шар түскенде арманыңыз орындалсын! 🎆✨</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Когда шар опустится на Таймс-Сквер, пусть сбудутся мечты! 🎆✨</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! When the ball drops in Times Square, may your dreams come true! 🎆✨</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! عندما تسقط الكرة في تايمز سكوير، تحقق أحلامك! 🎆✨</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Таймс Скверд бөмбөг унахад мөрөөдөл биелнэ! 🎆✨</p>
-        </div>
-
-        <!-- 3. Токио -->
-        <div class="city" data-timezone="Asia/Tokyo">
-            <h2 data-lang="kk">Токио, Жапония</h2>
-            <h2 data-lang="ru" style="display:none;">Токио, Япония</h2>
-            <h2 data-lang="en" style="display:none;">Tokyo, Japan</h2>
-            <h2 data-lang="ar" style="display:none;">طوكيو، اليابان</h2>
-            <h2 data-lang="mn" style="display:none;">Токио, Япон</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Akemashite omedetou! Жаңа жылда жаңа бастамалар болсын! 🗼🎍</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], Акэмашитэ омэдэто! Новые начинания в Новом году! 🗼🎍</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Akemashite omedetou! New beginnings in the New Year! 🗼🎍</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، أكيماشيتي أوميديتو! بدايات جديدة في العام الجديد! 🗼🎍</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Акемашите омедето! Шинэ жилд шинэ эхлэлтэй байг! 🗼🎍</p>
-        </div>
-
-        <!-- 4. Дубай -->
-        <div class="city" data-timezone="Asia/Dubai">
-            <h2 data-lang="kk">Дубай, БАӘ</h2>
-            <h2 data-lang="ru" style="display:none;">Дубай, ОАЭ</h2>
-            <h2 data-lang="en" style="display:none;">Dubai, UAE</h2>
-            <h2 data-lang="ar" style="display:none;">دبي، الإمارات</h2>
-            <h2 data-lang="mn" style="display:none;">Дубай, АНЭУ</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Бурдж Халифада отшашу астында бақыт тілеймін! 🏙️🎇</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Под фейерверком у Бурдж Халифа желаю счастья! 🏙️🎇</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! Under the fireworks at Burj Khalifa! 🏙️🎇</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! تحت الألعاب النارية في برج خليفة! 🏙️🎇</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Бурж Халифагийн салют доор аз жаргал хүсье! 🏙️🎇</p>
-        </div>
-
-        <!-- 5. Улан-Батор -->
-        <div class="city" data-timezone="Asia/Ulaanbaatar">
-            <h2 data-lang="kk">Улан-Батор, Моңғолия</h2>
-            <h2 data-lang="ru" style="display:none;">Улан-Батор, Монголия</h2>
-            <h2 data-lang="en" style="display:none;">Ulaanbaatar, Mongolia</h2>
-            <h2 data-lang="ar" style="display:none;">أولان باتور، منغوليا</h2>
-            <h2 data-lang="mn" style="display:none;">Улаанбаатар, Монгол</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Шинэ оны мэнд! Далада жаңа жылды қарсы алып, денсаулық тілеймін! ❄️🏞️</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! В степи встречайте Новый год с здоровьем! ❄️🏞️</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! In the steppe, welcome the New Year with health! ❄️🏞️</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! في السهوب، استقبل العام الجديد بالصحة! ❄️🏞️</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Талд шинэ жилыйг эрүүл мэндээр угтъя! ❄️🏞️</p>
-        </div>
+    <div id="loginScreen" class="card">
+        <h1 id="appTitle">🎄 Жаңа Жылдық Құттықтау</h1>
+        <p id="appDesc">Атыңызды енгізіп, саяхатты бастаңыз!</p>
+        
+        <select id="langSelect" onchange="manualLangChange()">
+            </select>
+        
+        <input type="text" id="nameInput" placeholder="...">
+        <button onclick="startJourney()" id="btnStart">Бастау 🚀</button>
     </div>
 
-    <button onclick="nextCity()" style="display:none;" id="nextBtnKk" data-lang="kk">Келесі қалаға саяхат ➜ 🎉</button>
-    <button onclick="nextCity()" style="display:none;" id="nextBtnRu" data-lang="ru">Следующий город ➜ 🎉</button>
-    <button onclick="nextCity()" style="display:none;" id="nextBtnEn" data-lang="en">Next city ➜ 🎉</button>
-    <button onclick="nextCity()" style="display:none;" id="nextBtnAr" data-lang="ar">المدينة التالية ➜ 🎉</button>
-    <button onclick="nextCity()" style="display:none;" id="nextBtnMn" data-lang="mn">Дараагийн хот руу ➜ 🎉</button>
+    <div id="journeyScreen" class="card hidden">
+        <h1 id="mainTitle">Құтты болсын!</h1>
+        
+        <div class="city-content">
+            <h2 id="cityName" class="city-title">City</h2>
+            <div id="localTime" class="time-display">00:00</div>
+            
+            <p id="greetingMsg" class="greeting-text">Message</p>
+            
+            <div id="poemMsg" class="poem-box"></div>
+        </div>
+
+        <button onclick="nextCity()" id="btnNext">Келесі қала ✈️</button>
+        <button onclick="shareGreeting()" class="secondary" id="btnShare">Досыма жіберу 🔗</button>
+    </div>
 
     <script>
-        let currentLang = 'kk';
-        let name = 'Досым';
-        let currentCity = 0;
-        const cities = document.querySelectorAll('.city');
-        const timeInfo = document.getElementById('timeInfo');
-
-        const nextBtns = {
-            kk: document.getElementById('nextBtnKk'),
-            ru: document.getElementById('nextBtnRu'),
-            en: document.getElementById('nextBtnEn'),
-            ar: document.getElementById('nextBtnAr'),
-            mn: document.getElementById('nextBtnMn')
+        // 1. БАРЛЫҚ ТІЛДЕР БАЗАСЫ (Өлеңдер қосылды)
+        const translations = {
+            kk: { 
+                title: "Жаңа Жыл Саяхаты", desc: "Атыңызды жазыңыз:", start: "Бастау 🚀", next: "Келесі ел ✈️", share: "Досыма жіберу 🔗", copied: "Сілтеме көшірілді!", 
+                greeting: "Құрметті {name}, Жаңа жылыңызбен! {city} төрінен ыстық сәлем!",
+                poem: "Жаңа жылда жаңа бақыт кез болсын,\nӘрбір күнің қуанышқа тез толсын.\nАрмандарың биіктерге самғасын,\nЖақсылықтар жаныңыздан қалмасын!"
+            },
+            ru: { 
+                title: "Новогоднее Путешествие", desc: "Введите ваше имя:", start: "Поехали 🚀", next: "Следующая страна ✈️", share: "Отправить другу 🔗", copied: "Ссылка скопирована!", 
+                greeting: "Дорогой(ая) {name}, С Новым Годом! Привет из {city}!",
+                poem: "Пусть Новый год добро несет,\nИ счастье в доме расцветет.\nПусть сбудутся мечты сполна,\nИ будет жизнь любви полна!"
+            },
+            en: { 
+                title: "New Year Journey", desc: "Enter your name:", start: "Start 🚀", next: "Next Country ✈️", share: "Send to Friend 🔗", copied: "Link copied!", 
+                greeting: "Dear {name}, Happy New Year! Greetings from {city}!",
+                poem: "May this New Year bring you light,\nMake your future warm and bright.\nJoy and peace in every day,\nSuccess and love will come your way!"
+            },
+            tr: { 
+                title: "Yeni Yıl Yolculuğu", desc: "Adınızı giriniz:", start: "Başla 🚀", next: "Sonraki Ülke ✈️", share: "Arkadaşa Gönder 🔗", copied: "Bağlantı kopyalandı!", 
+                greeting: "Sevgili {name}, Yeni Yılınız Kutlu Olsun! {city}'den selamlar!",
+                poem: "Yeni yıl sana huzur getirsin,\nTüm dertlerin artık bitsin.\nYüzün her an neşeyle gülsün,\nHayallerin gerçeğe dönsün!"
+            },
+            fr: { 
+                title: "Voyage du Nouvel An", desc: "Entrez votre nom:", start: "Commencer 🚀", next: "Pays Suivant ✈️", share: "Envoyer à un ami 🔗", copied: "Lien copié!", 
+                greeting: "Cher {name}, Bonne Année! Salutations de {city}!",
+                poem: "Que cette année soit pleine de joie,\nQue le bonheur soit avec toi.\nSanté, succès et jours heureux,\nVoilà mes plus sincères vœux !"
+            },
+            zh: { 
+                title: "新年之旅", desc: "输入你的名字:", start: "开始 🚀", next: "下一个国家 ✈️", share: "发送给朋友 🔗", copied: "链接已复制!", 
+                greeting: "亲爱的 {name}, 新年快乐! 来自 {city} 的问候!",
+                poem: "新年来临喜气浓，\n万事如意乐融融。\n愿你梦想皆成真，\n幸福安康伴一生。"
+            },
+            ar: { 
+                title: "رحلة العام الجديد", desc: "أدخل اسمك:", start: "يبدأ 🚀", next: "البلد التالي ✈️", share: "أرسل لصديق 🔗", copied: "تم نسخ الرابط!", 
+                greeting: "عزيزي {name}، سنة جديدة سعيدة! تحياتي من {city}!",
+                poem: "عام جديد يهل بالنور،\nيملأ قلبك بالسرور.\nتحقق فيه كل الأماني،\nوتعيش في خير وتهاني."
+            }
         };
 
-        function changeLanguage() {
-            currentLang = document.getElementById('language').value;
-            document.querySelectorAll('[data-lang]').forEach(el => {
-                el.style.display = (el.getAttribute('data-lang') === currentLang) ? 'block' : 'none';
-            });
-            Object.keys(nextBtns).forEach(lang => {
-                nextBtns[lang].style.display = (lang === currentLang) ? 'block' : 'none';
-            });
-            updateGreeting();
-            updateTime();
+        // 2. ҚАЛАЛАР (Бұл жер өзгеріссіз қалды)
+        const destinations = [
+            { name: "Almaty, Kazakhstan", tz: "Asia/Almaty" },
+            { name: "New York, USA", tz: "America/New_York" },
+            { name: "Tokyo, Japan", tz: "Asia/Tokyo" },
+            { name: "Istanbul, Turkey", tz: "Europe/Istanbul" },
+            { name: "Paris, France", tz: "Europe/Paris" },
+            { name: "Dubai, UAE", tz: "Asia/Dubai" },
+            { name: "Beijing, China", tz: "Asia/Shanghai" },
+            { name: "London, UK", tz: "Europe/London" },
+            { name: "Sydney, Australia", tz: "Australia/Sydney" }
+        ];
+
+        let currentLang = 'en'; 
+        let userName = '';
+        let currentDestIndex = 0;
+
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedName = urlParams.get('name');
+            detectLanguage();
+            populateLangSelect();
+            updateUIText();
+            if (sharedName) {
+                document.getElementById('nameInput').value = sharedName;
+                startJourney();
+            }
+        };
+
+        function detectLanguage() {
+            const browserLang = navigator.language.slice(0, 2);
+            if (translations[browserLang]) currentLang = browserLang;
+            document.getElementById('langSelect').value = currentLang;
+        }
+
+        function populateLangSelect() {
+            const select = document.getElementById('langSelect');
+            const langNames = { kk: "Қазақша", ru: "Русский", en: "English", tr: "Türkçe", fr: "Français", zh: "中文", ar: "العربية" };
+            for (let key in translations) {
+                let opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = langNames[key] || key.toUpperCase();
+                select.appendChild(opt);
+            }
+            select.value = currentLang;
+        }
+
+        function manualLangChange() {
+            currentLang = document.getElementById('langSelect').value;
+            updateUIText();
+            if(!document.getElementById('journeyScreen').classList.contains('hidden')){
+                updateGreetingCard(); 
+            }
+        }
+
+        function updateUIText() {
+            const t = translations[currentLang];
+            document.getElementById('appTitle').textContent = t.title;
+            document.getElementById('appDesc').textContent = t.desc;
+            document.getElementById('btnStart').textContent = t.start;
+            document.getElementById('btnNext').textContent = t.next;
+            document.getElementById('btnShare').textContent = t.share;
+            document.getElementById('nameInput').placeholder = (currentLang === 'kk' ? "Мысалы: Айжан" : "Name...");
         }
 
         function startJourney() {
-            const inputName = document.getElementById('name').value.trim();
-            name = inputName || 'Досым';
-            document.getElementById('form').style.display = 'none';
-            nextCity();
-            Object.keys(nextBtns).forEach(lang => {
-                nextBtns[lang].style.display = (lang === currentLang) ? 'block' : 'none';
-            });
-            timeInfo.style.display = 'block';
-            confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+            const input = document.getElementById('nameInput');
+            userName = input.value.trim() || "Friend";
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('journeyScreen').classList.remove('hidden');
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            updateGreetingCard();
+            setInterval(updateTime, 1000);
+        }
+
+        function updateGreetingCard() {
+            const cityObj = destinations[currentDestIndex];
+            const t = translations[currentLang];
+            
+            // Қысқаша құттықтауды жаңарту
+            let msg = t.greeting.replace("{name}", `<strong style="color:#ffeb3b">${userName}</strong>`);
+            msg = msg.replace("{city}", cityObj.name);
+
+            document.getElementById('cityName').textContent = cityObj.name;
+            document.getElementById('greetingMsg').innerHTML = msg;
+            
+            // ӨЛЕҢДІ ЖАҢАРТУ
+            document.getElementById('poemMsg').textContent = t.poem;
+            
             updateTime();
         }
 
         function nextCity() {
-            cities.forEach(c => c.style.display = 'none');
-            currentCity = (currentCity + 1) % cities.length;
-            cities[currentCity].style.display = 'block';
-            updateGreeting();
-            updateTime();
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-        }
-
-        function updateGreeting() {
-            document.querySelectorAll('.greeting').forEach(el => {
-                if (el.style.display !== 'none') {
-                    el.innerHTML = el.innerHTML.replace(/\[name\]/g, '<strong style="color:#ffeb3b;">' + name + '</strong>');
-                }
-            });
+            currentDestIndex = (currentDestIndex + 1) % destinations.length;
+            const card = document.getElementById('journeyScreen');
+            card.style.transform = 'scale(0.95)';
+            setTimeout(() => card.style.transform = 'scale(1)', 200);
+            confetti({ particleCount: 100, spread: 60, origin: { y: 0.7 } });
+            updateGreetingCard();
         }
 
         function updateTime() {
-            const currentCityEl = cities[currentCity];
-            const timezone = currentCityEl.getAttribute('data-timezone');
+            const cityObj = destinations[currentDestIndex];
             const now = new Date();
-            const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: false };
-            const formatter = new Intl.DateTimeFormat(currentLang, options);
-            const timeStr = formatter.format(now);
-
-            let prefix = '';
-            if (currentLang === 'kk') prefix = 'Қазір сағат: ';
-            else if (currentLang === 'ru') prefix = 'Сейчас время: ';
-            else if (currentLang === 'en') prefix = 'Current time: ';
-            else if (currentLang === 'ar') prefix = 'الوقت الحالي: ';
-            else if (currentLang === 'mn') prefix = 'Одоогийн цаг: ';
-
-            timeInfo.textContent = prefix + timeStr;
+            const options = { timeZone: cityObj.tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            try {
+                const timeStr = new Intl.DateTimeFormat('en-US', options).format(now);
+                document.getElementById('localTime').textContent = timeStr;
+            } catch (e) {
+                document.getElementById('localTime').textContent = "--:--";
+            }
         }
 
-        // Қар түсіру
-        function createSnow() {
-            const snow = document.createElement('div');
-            snow.classList.add('snowflake');
-            snow.textContent = ['❄', '❅', '❆'][Math.floor(Math.random() * 3)];
-            snow.style.left = Math.random() * window.innerWidth + 'px';
-            snow.style.animationDuration = Math.random() * 5 + 8 + 's';
-            snow.style.fontSize = Math.random() * 10 + 15 + 'px';
-            document.body.appendChild(snow);
-            setTimeout(() => snow.remove(), 15000);
+        function shareGreeting() {
+            const url = window.location.protocol + "//" + window.location.host + window.location.pathname + "?name=" + encodeURIComponent(userName);
+            if (navigator.share) {
+                navigator.share({
+                    title: 'New Year Wish',
+                    text: `Special greeting for ${userName}`,
+                    url: url,
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(url).then(() => {
+                    const t = translations[currentLang];
+                    const originalText = document.getElementById('btnShare').textContent;
+                    document.getElementById('btnShare').textContent = t.copied;
+                    setTimeout(() => {
+                        document.getElementById('btnShare').textContent = originalText;
+                    }, 2000);
+                });
+            }
         }
-        setInterval(createSnow, 200);
     </script>
 </body>
 </html>
