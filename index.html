@@ -4,53 +4,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Жаңа Жыл Саяхаты Құттықтауы</title>
+    
+    <!-- PWA – телефонға орнату түймесі шығады -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            background: linear-gradient(to bottom, #e0f7fa, #80deea); 
-            text-align: center; 
-            padding: 20px; 
-            color: #333; 
+        body {
+            font-family: 'Arial', sans-serif;
             margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background: url('https://wallpaperaccess.com/full/124383.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
         }
-        h1 { color: #d32f2f; font-size: 28px; }
-        .greeting { 
-            font-size: 22px; 
-            color: #1b5e20; 
-            margin: 30px; 
-            padding: 25px; 
-            background: rgba(255,255,255,0.9); 
-            border-radius: 20px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        /* Отшашу фоны */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://i.pinimg.com/originals/1f/fa/c5/1ffac5f8688570a8cbdd049c54e7a1d2.gif') no-repeat center center;
+            background-size: cover;
+            opacity: 0.4;
+            z-index: -2;
         }
-        button { 
-            background-color: #ff5722; 
-            color: white; 
-            padding: 15px 30px; 
-            border: none; 
-            cursor: pointer; 
-            font-size: 18px; 
-            border-radius: 12px; 
+        h1 {
+            font-size: 32px;
+            color: #ffeb3b;
+            text-shadow: 3px 3px 6px #000;
+            margin-bottom: 10px;
+        }
+        .greeting {
+            font-size: 24px;
+            color: #fff;
+            background: rgba(0, 0, 50, 0.7);
+            padding: 25px;
+            margin: 30px auto;
+            max-width: 90%;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+            text-shadow: 1px 1px 3px #000;
+        }
+        button {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            transition: 0.3s;
+        }
+        button:hover { transform: scale(1.05); }
+        #nextBtn {
+            background: #4caf50;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        select, input {
+            padding: 12px;
+            font-size: 18px;
             margin: 15px;
-        }
-        #nextBtn { background-color: #4caf50; }
-        select, input { 
-            padding: 12px; 
-            font-size: 18px; 
-            margin: 10px; 
-            border-radius: 8px; 
-            border: 1px solid #ccc;
+            border-radius: 10px;
+            border: none;
+            width: 80%;
+            max-width: 320px;
         }
         .city { display: none; }
+
+        /* Қар түсіру */
+        .snowflake {
+            position: absolute;
+            color: white;
+            font-size: 20px;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh); }
+        }
     </style>
+    <!-- Конфетти эффектісі -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 
-    <h1 data-lang="kk">Жаңа Жылмен! Әлемдік Саяхат Құттықтауы 🎉</h1>
-    <h1 data-lang="ru" style="display:none;">С Новым Годом! Мировое Путешествие Поздравления 🎉</h1>
-    <h1 data-lang="en" style="display:none;">Happy New Year! World Travel Greeting 🎉</h1>
-    <h1 data-lang="ar" style="display:none;">عام سعيد! تهنئة سفر عالمية 🎉</h1>
-    <h1 data-lang="mn" style="display:none;">Шинэ оны мэнд! Дэлхийн аялалын мэндчилгээ 🎉</h1>
+    <h1 data-lang="kk">Жаңа Жылмен! Әлемдік Саяхат Құттықтауы 🎄✨🎉</h1>
+    <h1 data-lang="ru" style="display:none;">С Новым Годом! Мировое Путешествие Поздравления 🎄✨🎉</h1>
+    <h1 data-lang="en" style="display:none;">Happy New Year! World Travel Greeting 🎄✨🎉</h1>
+    <h1 data-lang="ar" style="display:none;">عام سعيد! تهنئة سفر عالمية 🎄✨🎉</h1>
+    <h1 data-lang="mn" style="display:none;">Шинэ оны мэнд! Дэлхийн аялалын мэндчилгээ 🎄✨🎉</h1>
 
     <p data-lang="kk">Атыңызды енгізіп, тілді таңдаңыз да, әлемдік саяхатты бастаңыз!</p>
     <p data-lang="ru" style="display:none;">Введите имя, выберите язык и начните мировое путешествие!</p>
@@ -67,13 +122,9 @@
     </select>
 
     <form id="form">
-        <label data-lang="kk">Атыңыз:</label>
-        <label data-lang="ru" style="display:none;">Имя:</label>
-        <label data-lang="en" style="display:none;">Name:</label>
-        <label data-lang="ar" style="display:none;">الاسم:</label>
-        <label data-lang="mn" style="display:none;">Нэр:</label><br>
-        <input type="text" id="name" placeholder="Мысалы: Айша" required>
-        <button type="button" onclick="startJourney()">Бастау</button>
+        <label data-lang="kk">Атыңыз:</label><br>
+        <input type="text" id="name" placeholder="Мысалы: Айша, Нұрлан" required><br>
+        <button type="button" onclick="startJourney()">Бастау 🎉</button>
     </form>
 
     <div id="cities">
@@ -84,11 +135,11 @@
             <h2 data-lang="en" style="display:none;">Almaty, Kazakhstan</h2>
             <h2 data-lang="ar" style="display:none;">ألماتي، كازاخستان</h2>
             <h2 data-lang="mn" style="display:none;">Алматы, Казахстан</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Алматыда шырша астында бақытқа толы жыл тілеймін!</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Под елкой в Алматы желаю счастья!</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! Under the tree in Almaty, I wish you happiness!</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! تحت الشجرة في ألماتي أتمنى لك السعادة!</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Алматыд модны доор аз жаргалтай байг!</p>
+            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Алматыда шырша астында бақытқа толы жыл тілеймін! 🎄❤️</p>
+            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Под елкой в Алматы желаю счастья! 🎄❤️</p>
+            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! Under the tree in Almaty, I wish you happiness! 🎄❤️</p>
+            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! تحت الشجرة في ألماتي أتمنى لك السعادة! 🎄❤️</p>
+            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Алматыд модны доор аз жаргалтай жил хүсье! 🎄❤️</p>
         </div>
 
         <!-- 2. Нью-Йорк -->
@@ -98,11 +149,11 @@
             <h2 data-lang="en" style="display:none;">New York, USA</h2>
             <h2 data-lang="ar" style="display:none;">نيويورك، الولايات المتحدة</h2>
             <h2 data-lang="mn" style="display:none;">Нью-Йорк, АНУ</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Таймс-Скверде шар түскенде арманыңыз орындалсын!</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Когда шар опустится на Таймс-Сквер, пусть сбудутся мечты!</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! When the ball drops in Times Square, may your dreams come true!</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! عندما تسقط الكرة في تايمز سكوير، تحقق أحلامك!</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Таймс Скверд бөмбөг унахад мөрөөдөл чинь биелнэ!</p>
+            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Таймс-Скверде шар түскенде арманыңыз орындалсын! 🎆✨</p>
+            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Когда шар опустится на Таймс-Сквер, пусть сбудутся мечты! 🎆✨</p>
+            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! When the ball drops in Times Square, may your dreams come true! 🎆✨</p>
+            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! عندما تسقط الكرة في تايمز سكوير، تحقق أحلامك! 🎆✨</p>
+            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Таймс Скверд бөмбөг унахад мөрөөдөл биелнэ! 🎆✨</p>
         </div>
 
         <!-- 3. Токио -->
@@ -112,11 +163,11 @@
             <h2 data-lang="en" style="display:none;">Tokyo, Japan</h2>
             <h2 data-lang="ar" style="display:none;">طوكيو، اليابان</h2>
             <h2 data-lang="mn" style="display:none;">Токио, Япон</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Akemashite omedetou! Жаңа жылда жаңа бастамалар болсын!</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], Акэмашитэ омэдэто! Новые начинания в Новом году!</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Akemashite omedetou! New beginnings in the New Year!</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، أكيماشيتي أوميديتو! بدايات جديدة في العام الجديد!</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Акемашите омедето! Шинэ жилд шинэ эхлэл!</p>
+            <p class="greeting" data-lang="kk">Құрметті [name], Akemashite omedetou! Жаңа жылда жаңа бастамалар болсын! 🗼🎍</p>
+            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], Акэмашитэ омэдэто! Новые начинания в Новом году! 🗼🎍</p>
+            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Akemashite omedetou! New beginnings in the New Year! 🗼🎍</p>
+            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، أكيماشيتي أوميديتو! بدايات جديدة في العام الجديد! 🗼🎍</p>
+            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Акемашите омедето! Шинэ жилд шинэ эхлэлтэй байг! 🗼🎍</p>
         </div>
 
         <!-- 4. Дубай -->
@@ -126,11 +177,11 @@
             <h2 data-lang="en" style="display:none;">Dubai, UAE</h2>
             <h2 data-lang="ar" style="display:none;">دبي، الإمارات</h2>
             <h2 data-lang="mn" style="display:none;">Дубай, АНЭУ</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Бурдж Халифада отшашу астында бақыт тілеймін!</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Под фейерверком у Бурдж Халифа желаю счастья!</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! Under the fireworks at Burj Khalifa!</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! تحت الألعاب النارية في برج خليفة!</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Бурж Халифагийн салют доор аз жаргал!</p>
+            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Бурдж Халифада отшашу астында бақыт тілеймін! 🏙️🎇</p>
+            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Под фейерверком у Бурдж Халифа желаю счастья! 🏙️🎇</p>
+            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! Under the fireworks at Burj Khalifa! 🏙️🎇</p>
+            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! تحت الألعاب النارية في برج خليفة! 🏙️🎇</p>
+            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Бурж Халифагийн салют доор аз жаргал хүсье! 🏙️🎇</p>
         </div>
 
         <!-- 5. Улан-Батор -->
@@ -140,19 +191,19 @@
             <h2 data-lang="en" style="display:none;">Ulaanbaatar, Mongolia</h2>
             <h2 data-lang="ar" style="display:none;">أولان باتور، منغوليا</h2>
             <h2 data-lang="mn" style="display:none;">Улаанбаатар, Монгол</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Шинэ оны мэнд! Далада жаңа жылды қарсы алып, денсаулық тілеймін!</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! В степи встречайте Новый год с здоровьем!</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! In the steppe, welcome the New Year with health!</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! في السهوب، استقبل العام الجديد بالصحة!</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Талд шинэ жылыйг эрүүл мэндээр угтъя!</p>
+            <p class="greeting" data-lang="kk">Құрметті [name], Шинэ оны мэнд! Далада жаңа жылды қарсы алып, денсаулық тілеймін! ❄️🏞️</p>
+            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! В степи встречайте Новый год с здоровьем! ❄️🏞️</p>
+            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! In the steppe, welcome the New Year with health! ❄️🏞️</p>
+            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! في السهوب، استقبل العام الجديد بالصحة! ❄️🏞️</p>
+            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Талд шинэ жилыйг эрүүл мэндээр угтъя! ❄️🏞️</p>
         </div>
     </div>
 
-    <button onclick="nextCity()" style="display:none;" id="nextBtn">Келесі қалаға саяхат ➜</button>
+    <button onclick="nextCity()" style="display:none;" id="nextBtn">Келесі қалаға саяхат ➜ 🎉</button>
 
     <script>
         let currentLang = 'kk';
-        let name = '';
+        let name = 'Досым';
         let currentCity = 0;
         const cities = document.querySelectorAll('.city');
 
@@ -165,11 +216,12 @@
         }
 
         function startJourney() {
-            name = document.getElementById('name').value.trim();
-            if (name === '') name = 'Досым';
+            const inputName = document.getElementById('name').value.trim();
+            name = inputName || 'Досым';
             document.getElementById('form').style.display = 'none';
             nextCity();
             document.getElementById('nextBtn').style.display = 'block';
+            confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
         }
 
         function nextCity() {
@@ -177,16 +229,30 @@
             currentCity = (currentCity + 1) % cities.length;
             cities[currentCity].style.display = 'block';
             updateGreeting();
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
         }
 
         function updateGreeting() {
             document.querySelectorAll('.greeting').forEach(el => {
                 if (el.style.display !== 'none') {
-                    el.innerHTML = el.innerHTML.replace(/\[name\]/g, '<strong>' + name + '</strong>');
+                    el.innerHTML = el.innerHTML.replace(/\[name\]/g, '<strong style="color:#ffeb3b;">' + name + '</strong>');
                 }
             });
         }
+
+        // Қар түсіру
+        function createSnow() {
+            const snow = document.createElement('div');
+            snow.classList.add('snowflake');
+            snow.textContent = ['❄', '❅', '❆'][Math.floor(Math.random() * 3)];
+            snow.style.left = Math.random() * 100 + 'vw';
+            snow.style.animationDuration = Math.random() * 8 + 8 + 's';
+            snow.style.opacity = Math.random() * 0.5 + 0.5;
+            snow.style.fontSize = Math.random() * 15 + 15 + 'px';
+            document.body.appendChild(snow);
+            setTimeout(() => snow.remove(), 16000);
+        }
+        setInterval(createSnow, 200);
     </script>
 </body>
-
 </html>
