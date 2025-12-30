@@ -53,6 +53,12 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.6);
             text-shadow: 1px 1px 3px #000;
         }
+        .time-info {
+            font-size: 18px;
+            color: #ffeb3b;
+            margin: 10px;
+            text-shadow: 1px 1px 3px #000;
+        }
         button {
             background: #d32f2f;
             color: white;
@@ -84,19 +90,6 @@
             max-width: 320px;
         }
         .city { display: none; }
-        .sound-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 10px 15px;
-            font-size: 18px;
-            background: rgba(0,0,0,0.5);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            z-index: 10;
-        }
 
         /* Қар түсіру */
         .snowflake {
@@ -112,8 +105,6 @@
     </style>
 </head>
 <body>
-
-    <button class="sound-btn" onclick="toggleSound()" id="soundBtn">🔊 Дыбыс қосулы</button>
 
     <h1 data-lang="kk">Жаңа Жылмен! Әлемдік Саяхат Құттықтауы 🎄✨🎉</h1>
     <h1 data-lang="ru" style="display:none;">С Новым Годом! Мировое Путешествие Поздравления 🎄✨🎉</h1>
@@ -141,9 +132,11 @@
         <button type="button" onclick="startJourney()">Бастау 🎉</button>
     </form>
 
+    <div id="timeInfo" class="time-info" style="display:none;"></div>
+
     <div id="cities">
         <!-- 1. Алматы -->
-        <div class="city">
+        <div class="city" data-timezone="Asia/Almaty">
             <h2 data-lang="kk">Алматы, Қазақстан</h2>
             <h2 data-lang="ru" style="display:none;">Алматы, Казахстан</h2>
             <h2 data-lang="en" style="display:none;">Almaty, Kazakhstan</h2>
@@ -157,7 +150,7 @@
         </div>
 
         <!-- 2. Нью-Йорк -->
-        <div class="city">
+        <div class="city" data-timezone="America/New_York">
             <h2 data-lang="kk">Нью-Йорк, АҚШ</h2>
             <h2 data-lang="ru" style="display:none;">Нью-Йорк, США</h2>
             <h2 data-lang="en" style="display:none;">New York, USA</h2>
@@ -171,7 +164,7 @@
         </div>
 
         <!-- 3. Токио -->
-        <div class="city">
+        <div class="city" data-timezone="Asia/Tokyo">
             <h2 data-lang="kk">Токио, Жапония</h2>
             <h2 data-lang="ru" style="display:none;">Токио, Япония</h2>
             <h2 data-lang="en" style="display:none;">Tokyo, Japan</h2>
@@ -185,7 +178,7 @@
         </div>
 
         <!-- 4. Дубай -->
-        <div class="city">
+        <div class="city" data-timezone="Asia/Dubai">
             <h2 data-lang="kk">Дубай, БАӘ</h2>
             <h2 data-lang="ru" style="display:none;">Дубай, ОАЭ</h2>
             <h2 data-lang="en" style="display:none;">Dubai, UAE</h2>
@@ -199,7 +192,7 @@
         </div>
 
         <!-- 5. Улан-Батор -->
-        <div class="city">
+        <div class="city" data-timezone="Asia/Ulaanbaatar">
             <h2 data-lang="kk">Улан-Батор, Моңғолия</h2>
             <h2 data-lang="ru" style="display:none;">Улан-Батор, Монголия</h2>
             <h2 data-lang="en" style="display:none;">Ulaanbaatar, Mongolia</h2>
@@ -213,88 +206,70 @@
         </div>
     </div>
 
-    <button onclick="nextCity()" style="display:none;" id="nextBtn">Келесі қалаға саяхат ➜ 🎉</button>
-
-    <!-- Әр тілге арналған музыка (тегін, royalty-free сілтемелер) -->
-    <audio id="music-kk" src="https://cdn.pixabay.com/download/audio/2023/12/13/audio_8e0c7d5d8f.mp3?filename=kazakh-traditional-music-174066.mp3" loop></audio>
-    <audio id="music-ru" src="https://cdn.pixabay.com/download/audio/2022/12/15/audio_6d7d8d3b8f.mp3?filename=jingle-bells-russian-131861.mp3" loop></audio>
-    <audio id="music-en" src="https://cdn.pixabay.com/download/audio/2022/11/23/audio_3b3d7d3f0f.mp3?filename=jingle-bells-8-bit-14546.mp3" loop></audio>
-    <audio id="music-ar" src="https://cdn.pixabay.com/download/audio/2023/01/03/audio_1d5d5e5e5f.mp3?filename=arabic-christmas-149407.mp3" loop></audio>
-    <audio id="music-mn" src="https://cdn.pixabay.com/download/audio/2023/08/15/audio_5e5d5e5d5e.mp3?filename=mongolian-throat-singing-165407.mp3" loop></audio>
+    <button onclick="nextCity()" style="display:none;" id="nextBtn" data-lang="kk">Келесі қалаға саяхат ➜ 🎉</button>
+    <button onclick="nextCity()" style="display:none;" id="nextBtnRu" data-lang="ru">Следующий город ➜ 🎉</button>
+    <button onclick="nextCity()" style="display:none;" id="nextBtnEn" data-lang="en">Next city ➜ 🎉</button>
+    <button onclick="nextCity()" style="display:none;" id="nextBtnAr" data-lang="ar">المدينة التالية ➜ 🎉</button>
+    <button onclick="nextCity()" style="display:none;" id="nextBtnMn" data-lang="mn">Дараагийн хот руу ➜ 🎉</button>
 
     <script>
         let currentLang = 'kk';
         let name = 'Досым';
         let currentCity = 0;
         const cities = document.querySelectorAll('.city');
+        const timeInfo = document.getElementById('timeInfo');
 
-        // Музыка объектілері
-        const music = {
-            kk: document.getElementById('music-kk'),
-            ru: document.getElementById('music-ru'),
-            en: document.getElementById('music-en'),
-            ar: document.getElementById('music-ar'),
-            mn: document.getElementById('music-mn')
+        const nextButtons = {
+            kk: document.getElementById('nextBtn'),
+            ru: document.getElementById('nextBtnRu'),
+            en: document.getElementById('nextBtnEn'),
+            ar: document.getElementById('nextBtnAr'),
+            mn: document.getElementById('nextBtnMn')
         };
-        let currentMusic = music.kk;
-        let soundEnabled = true;
-
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            document.getElementById('soundBtn').textContent = soundEnabled ? '🔊 Дыбыс қосулы' : '🔇 Дыбыс өшірулі';
-            if (soundEnabled) {
-                currentMusic.play().catch(() => {});
-            } else {
-                currentMusic.pause();
-            }
-        }
 
         function changeLanguage() {
-            const newLang = document.getElementById('language').value;
-            if (newLang === currentLang) return;
-
-            // Ескі музыканы тоқтату
-            currentMusic.pause();
-            currentMusic.currentTime = 0;
-
-            currentLang = newLang;
-            currentMusic = music[newLang];
-
-            // Жаңа тілдің мәтіндерін көрсету
+            currentLang = document.getElementById('language').value;
             document.querySelectorAll('[data-lang]').forEach(el => {
                 el.style.display = (el.getAttribute('data-lang') === currentLang) ? 'block' : 'none';
             });
-
+            // Түймені ауыстыру
+            Object.keys(nextButtons).forEach(lang => {
+                nextButtons[lang].style.display = (lang === currentLang) ? 'block' : 'none';
+            });
             updateGreeting();
-
-            // Жаңа музыканы ойнату (егер дыбыс қосулы болса)
-            if (soundEnabled && gameStarted) {
-                currentMusic.play().catch(() => {});
-            }
         }
-
-        let gameStarted = false;
 
         function startJourney() {
             const inputName = document.getElementById('name').value.trim();
             name = inputName || 'Досым';
             document.getElementById('form').style.display = 'none';
             nextCity();
-            document.getElementById('nextBtn').style.display = 'block';
+            document.querySelectorAll('#nextBtn, #nextBtnRu, #nextBtnEn, #nextBtnAr, #nextBtnMn').forEach(btn => {
+                btn.style.display = (btn.getAttribute('data-lang') === currentLang) ? 'block' : 'none';
+            });
+            timeInfo.style.display = 'block';
             confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
-            gameStarted = true;
-
-            // Музыканы бастау
-            if (soundEnabled) {
-                currentMusic.play().catch(() => {});
-            }
         }
 
         function nextCity() {
             cities.forEach(c => c.style.display = 'none');
             currentCity = (currentCity + 1) % cities.length;
-            cities[currentCity].style.display = 'block';
+            const currentCityEl = cities[currentCity];
+            currentCityEl.style.display = 'block';
             updateGreeting();
+
+            // Уақытты көрсету
+            const timezone = currentCityEl.getAttribute('data-timezone');
+            const now = new Date();
+            const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: false };
+            const formatter = new Intl.DateTimeFormat(currentLang, options);
+            const timeStr = formatter.format(now);
+            timeInfo.textContent = currentLang === 'kk' ? `Қазір сағат: ${timeStr}` :
+                                  currentLang === 'ru' ? `Сейчас время: ${timeStr}` :
+                                  currentLang === 'en' ? `Current time: ${timeStr}` :
+                                  currentLang === 'ar' ? `الوقت الحالي: ${timeStr}` :
+                                  `Одоогийн цаг: ${timeStr}`;
+
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
         }
 
