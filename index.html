@@ -164,7 +164,7 @@
     </div>
 
     <script>
-        // --- БАРЛЫҚ ТІЛДЕГІ ИНТЕРФЕЙС МӘТІНДЕРІ (Түймелер қоса) ---
+        // --- БАРЛЫҚ ТІЛДЕГІ ИНТЕРФЕЙС МӘТІНДЕРІ ---
         const uiText = {
             kk: { title: "Жаңа Жыл 2026", desc: "Есіміңізді жазып, саяхатты бастаңыз!", ph: "Атыңыз...", start: "Бастау 🚀", next: "Келесі ел ✈️", share: "Бөлісу 🔗", copied: "Көшірілді!" },
             ru: { title: "Новый Год 2026", desc: "Введите имя и начните путешествие!", ph: "Ваше имя...", start: "Поехали 🚀", next: "Следующая страна ✈️", share: "Поделиться 🔗", copied: "Скопировано!" },
@@ -179,7 +179,8 @@
         const contentData = {
             kk: {
                 greet: "Құрметті {name}, Жаңа жылыңызбен! Осы қаланың сұлулығындай өміріңіз жарқын болсын!",
-                poem: "Келді міне Жаңа жыл жарқырап,\nАқ қар жатыр далада жалтырап.\nБаршаңызға бақыт пен құт әкеп,\nБақ-береке ағып келсін сарқырап!" 
+                // СІЗ ЖІБЕРГЕН ЖАҢА НҰСҚА:
+                poem: "Келді міне Жаңа жыл да жарқырап,\nАқ қар жатыр даламызда жалтырап.\nБаршамызға бақ-береке, құт дарып,\nМол ризық келсін бізге сарқырап!" 
             },
             ru: {
                 greet: "Дорогой(ая) {name}, С Новым Годом! Пусть этот год принесет столько счастья, сколько огней в этом городе!",
@@ -238,14 +239,10 @@
             const lang = document.getElementById('uiLangSelect').value;
             const t = uiText[lang];
             
-            // Интерфейсті жаңарту
             document.getElementById('appTitle').textContent = t.title;
             document.getElementById('appDesc').textContent = t.desc;
             document.getElementById('nameInput').placeholder = t.ph;
             document.getElementById('btnStart').textContent = t.start;
-            
-            // Бастапқы беттегі түймелер интерфейс тілінде қалады
-            // Ал Саяхат бетіне өткенде олар қала тіліне ауысады
         }
 
         function toggleMusic() {
@@ -280,23 +277,17 @@
 
         function updateContent() {
             const city = destinations[currentDestIndex];
-            // 1. Қаланың тілін анықтау
             const langCode = contentData[city.lang] ? city.lang : 'en';
-            
-            // 2. Құттықтау мәтінін алу
             const data = contentData[langCode];
+            const localUI = uiText[langCode] || uiText['en']; // Түймелер үшін сол елдің тілін алу
 
-            // 3. Сол тілдегі интерфейс сөздерін (Түймелерді) алу
-            const localUI = uiText[langCode] || uiText['en'];
-
-            // 4. Мәтіндерді жаңарту
             document.getElementById('cityName').textContent = city.name;
             document.getElementById('greetingMsg').innerHTML = data.greet.replace("{name}", `<b style="color:#ffd700">${userName}</b>`);
             document.getElementById('poemBox').textContent = data.poem;
 
-            // 5. ТҮЙМЕЛЕРДІҢ ТІЛІН АУЫСТЫРУ (Иммерсивті эффект)
-            document.getElementById('btnNext').innerHTML = localUI.next; // Мысалы: Pays Suivant ✈️
-            document.getElementById('btnShare').innerHTML = localUI.share; // Мысалы: Partager 🔗
+            // ТҮЙМЕЛЕР ТІЛІН СОЛ ЕЛДІҢ ТІЛІНЕ АУЫСТЫРУ
+            document.getElementById('btnNext').innerHTML = localUI.next;
+            document.getElementById('btnShare').innerHTML = localUI.share;
 
             updateTime();
         }
@@ -326,7 +317,6 @@
         function shareGreeting() {
             const url = window.location.protocol + "//" + window.location.host + window.location.pathname + "?name=" + encodeURIComponent(userName);
             
-            // "Көшірілді" деген сөз де сол елдің тілінде шығуы керек
             const city = destinations[currentDestIndex];
             const langCode = contentData[city.lang] ? city.lang : 'en';
             const localUI = uiText[langCode] || uiText['en'];
@@ -337,7 +327,7 @@
                 navigator.clipboard.writeText(url).then(() => {
                     const btn = document.getElementById('btnShare');
                     const original = btn.innerHTML;
-                    btn.textContent = localUI.copied; // "Copié!", "Көшірілді!"
+                    btn.textContent = localUI.copied;
                     setTimeout(() => btn.innerHTML = original, 2000);
                 });
             }
