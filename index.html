@@ -3,256 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Жаңа Жыл Саяхаты Құттықтауы</title>
-    
-    <!-- PWA – телефонға орнату түймесі шығады -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ffffff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="apple-touch-icon" href="icon-192.png">
-
+    <title>Аяз Ата Секіру Ойыны 🎄❄️</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
-            background: url('https://wallpaperaccess.com/full/124383.jpg') no-repeat center center fixed;
-            background-size: cover;
-            color: white;
-            text-align: center;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            font-family: Arial, sans-serif;
             overflow: hidden;
             position: relative;
         }
-        /* Отшашу фоны */
-        body::before {
-            content: '';
+        canvas {
+            border: 3px solid #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: linear-gradient(to bottom, #87CEEB 70%, #98FB98 100%);
+        }
+        .info {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://i.pinimg.com/originals/1f/fa/c5/1ffac5f8688570a8cbdd049c54e7a1d2.gif') no-repeat center center;
-            background-size: cover;
-            opacity: 0.4;
-            z-index: -2;
-        }
-        h1 {
-            font-size: 32px;
-            color: #ffeb3b;
-            text-shadow: 3px 3px 6px #000;
-            margin-bottom: 10px;
-        }
-        .greeting {
-            font-size: 24px;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             color: #fff;
-            background: rgba(0, 0, 50, 0.7);
-            padding: 25px;
-            margin: 30px auto;
-            max-width: 90%;
-            border-radius: 20px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-            text-shadow: 1px 1px 3px #000;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px #000;
+            font-weight: bold;
+            z-index: 10;
         }
-        button {
-            background: #d32f2f;
+        .start-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 40px;
+            font-size: 28px;
+            background: #FF4500;
             color: white;
             border: none;
-            padding: 16px 32px;
-            font-size: 20px;
-            border-radius: 15px;
+            border-radius: 20px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-            transition: 0.3s;
-        }
-        button:hover { transform: scale(1.05); }
-        #nextBtn {
-            background: #4caf50;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
             animation: pulse 2s infinite;
+            z-index: 10;
         }
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+            100% { transform: translate(-50%, -50%) scale(1); }
         }
-        select, input {
-            padding: 12px;
-            font-size: 18px;
-            margin: 15px;
-            border-radius: 10px;
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            font-size: 24px;
+            text-align: center;
+            display: none;
+            z-index: 10;
+        }
+        .mobile-btn {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 20px 40px;
+            font-size: 20px;
+            background: #4CAF50;
+            color: white;
             border: none;
-            width: 80%;
-            max-width: 320px;
+            border-radius: 15px;
+            cursor: pointer;
+            display: none;
+            z-index: 10;
         }
-        .city { display: none; }
-
-        /* Қар түсіру */
+        .sound-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            font-size: 18px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 10;
+        }
+        /* Қар анимациясы */
         .snowflake {
             position: absolute;
             color: white;
             font-size: 20px;
             pointer-events: none;
-            animation: fall linear infinite;
+            animation: fall linear infinite, sway 2s ease-in-out infinite;
+            opacity: 0.9;
         }
         @keyframes fall {
             to { transform: translateY(100vh); }
         }
+        @keyframes sway {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(20px); }
+        }
     </style>
-    <!-- Конфетти эффектісі -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-
-    <h1 data-lang="kk">Жаңа Жылмен! Әлемдік Саяхат Құттықтауы 🎄✨🎉</h1>
-    <h1 data-lang="ru" style="display:none;">С Новым Годом! Мировое Путешествие Поздравления 🎄✨🎉</h1>
-    <h1 data-lang="en" style="display:none;">Happy New Year! World Travel Greeting 🎄✨🎉</h1>
-    <h1 data-lang="ar" style="display:none;">عام سعيد! تهنئة سفر عالمية 🎄✨🎉</h1>
-    <h1 data-lang="mn" style="display:none;">Шинэ оны мэнд! Дэлхийн аялалын мэндчилгээ 🎄✨🎉</h1>
-
-    <p data-lang="kk">Атыңызды енгізіп, тілді таңдаңыз да, әлемдік саяхатты бастаңыз!</p>
-    <p data-lang="ru" style="display:none;">Введите имя, выберите язык и начните мировое путешествие!</p>
-    <p data-lang="en" style="display:none;">Enter your name, choose language and start the world journey!</p>
-    <p data-lang="ar" style="display:none;">أدخل اسمك، اختر اللغة وبدء الرحلة العالمية!</p>
-    <p data-lang="mn" style="display:none;">Нэрээ оруулна уу, хэл сонгоод дэлхийн аялалаа эхлүүл!</p>
-
-    <select id="language" onchange="changeLanguage()">
-        <option value="kk">Қазақ</option>
-        <option value="ru">Русский</option>
-        <option value="en">English</option>
-        <option value="ar">العربية</option>
-        <option value="mn">Монгол</option>
-    </select>
-
-    <form id="form">
-        <label data-lang="kk">Атыңыз:</label><br>
-        <input type="text" id="name" placeholder="Мысалы: Айша, Нұрлан" required><br>
-        <button type="button" onclick="startJourney()">Бастау 🎉</button>
-    </form>
-
-    <div id="cities">
-        <!-- 1. Алматы -->
-        <div class="city">
-            <h2 data-lang="kk">Алматы, Қазақстан</h2>
-            <h2 data-lang="ru" style="display:none;">Алматы, Казахстан</h2>
-            <h2 data-lang="en" style="display:none;">Almaty, Kazakhstan</h2>
-            <h2 data-lang="ar" style="display:none;">ألماتي، كازاخستان</h2>
-            <h2 data-lang="mn" style="display:none;">Алматы, Казахстан</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Алматыда шырша астында бақытқа толы жыл тілеймін! 🎄❤️</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Под елкой в Алматы желаю счастья! 🎄❤️</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! Under the tree in Almaty, I wish you happiness! 🎄❤️</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! تحت الشجرة في ألماتي أتمنى لك السعادة! 🎄❤️</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Алматыд модны доор аз жаргалтай жил хүсье! 🎄❤️</p>
-        </div>
-
-        <!-- 2. Нью-Йорк -->
-        <div class="city">
-            <h2 data-lang="kk">Нью-Йорк, АҚШ</h2>
-            <h2 data-lang="ru" style="display:none;">Нью-Йорк, США</h2>
-            <h2 data-lang="en" style="display:none;">New York, USA</h2>
-            <h2 data-lang="ar" style="display:none;">نيويورك، الولايات المتحدة</h2>
-            <h2 data-lang="mn" style="display:none;">Нью-Йорк, АНУ</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Таймс-Скверде шар түскенде арманыңыз орындалсын! 🎆✨</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Когда шар опустится на Таймс-Сквер, пусть сбудутся мечты! 🎆✨</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! When the ball drops in Times Square, may your dreams come true! 🎆✨</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! عندما تسقط الكرة في تايمز سكوير، تحقق أحلامك! 🎆✨</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Таймс Скверд бөмбөг унахад мөрөөдөл биелнэ! 🎆✨</p>
-        </div>
-
-        <!-- 3. Токио -->
-        <div class="city">
-            <h2 data-lang="kk">Токио, Жапония</h2>
-            <h2 data-lang="ru" style="display:none;">Токио, Япония</h2>
-            <h2 data-lang="en" style="display:none;">Tokyo, Japan</h2>
-            <h2 data-lang="ar" style="display:none;">طوكيو، اليابان</h2>
-            <h2 data-lang="mn" style="display:none;">Токио, Япон</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Akemashite omedetou! Жаңа жылда жаңа бастамалар болсын! 🗼🎍</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], Акэмашитэ омэдэто! Новые начинания в Новом году! 🗼🎍</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Akemashite omedetou! New beginnings in the New Year! 🗼🎍</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، أكيماشيتي أوميديتو! بدايات جديدة في العام الجديد! 🗼🎍</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Акемашите омедето! Шинэ жилд шинэ эхлэлтэй байг! 🗼🎍</p>
-        </div>
-
-        <!-- 4. Дубай -->
-        <div class="city">
-            <h2 data-lang="kk">Дубай, БАӘ</h2>
-            <h2 data-lang="ru" style="display:none;">Дубай, ОАЭ</h2>
-            <h2 data-lang="en" style="display:none;">Dubai, UAE</h2>
-            <h2 data-lang="ar" style="display:none;">دبي، الإمارات</h2>
-            <h2 data-lang="mn" style="display:none;">Дубай, АНЭУ</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Бурдж Халифада отшашу астында бақыт тілеймін! 🏙️🎇</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Под фейерверком у Бурдж Халифа желаю счастья! 🏙️🎇</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! Under the fireworks at Burj Khalifa! 🏙️🎇</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! تحت الألعاب النارية في برج خليفة! 🏙️🎇</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Бурж Халифагийн салют доор аз жаргал хүсье! 🏙️🎇</p>
-        </div>
-
-        <!-- 5. Улан-Батор -->
-        <div class="city">
-            <h2 data-lang="kk">Улан-Батор, Моңғолия</h2>
-            <h2 data-lang="ru" style="display:none;">Улан-Батор, Монголия</h2>
-            <h2 data-lang="en" style="display:none;">Ulaanbaatar, Mongolia</h2>
-            <h2 data-lang="ar" style="display:none;">أولان باتور، منغوليا</h2>
-            <h2 data-lang="mn" style="display:none;">Улаанбаатар, Монгол</h2>
-            <p class="greeting" data-lang="kk">Құрметті [name], Шинэ оны мэнд! Далада жаңа жылды қарсы алып, денсаулық тілеймін! ❄️🏞️</p>
-            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! В степи встречайте Новый год с здоровьем! ❄️🏞️</p>
-            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! In the steppe, welcome the New Year with health! ❄️🏞️</p>
-            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! في السهوب، استقبل العام الجديد بالصحة! ❄️🏞️</p>
-            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Талд шинэ жилыйг эрүүл мэндээр угтъя! ❄️🏞️</p>
-        </div>
+    <div class="info" id="score">Ұпай: 0</div>
+    <button class="sound-btn" onclick="toggleSound()">🔊 Дыбыс қосулы</button>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <button class="start-btn" onclick="startGame()">Ойынды бастау 🎮</button>
+    <button class="mobile-btn" onclick="jump()">Секіру ⬆️</button>
+    <div class="game-over" id="gameOver">
+        <h2>Ойын аяқталды! 😢</h2>
+        <p id="finalScore">Ұпайыңыз: <span id="finalScoreNum">0</span></p>
+        <button onclick="restartGame()">Қайта бастау 🔄</button>
     </div>
 
-    <button onclick="nextCity()" style="display:none;" id="nextBtn">Келесі қалаға саяхат ➜ 🎉</button>
+    <!-- Дыбыс эффектілері (тегін, royalty-free) -->
+    <audio id="jumpSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
+    <audio id="scoreSound" src="https://assets.mixkit.co/sfx/preview/mixkit-coin-win-notification-4.mp3"></audio>
+    <audio id="hitSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-explosion-2759.mp3"></audio>
+    <audio id="backgroundMusic" src="https://cdn.pixabay.com/download/audio/2022/11/23/audio_3b3d7d3f0f.mp3?filename=jingle-bells-8-bit-14546.mp3" loop></audio>
 
     <script>
-        let currentLang = 'kk';
-        let name = 'Досым';
-        let currentCity = 0;
-        const cities = document.querySelectorAll('.city');
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const gameOverEl = document.getElementById('gameOver');
+        const finalScoreEl = document.getElementById('finalScoreNum');
+        const startBtn = document.querySelector('.start-btn');
+        const mobileBtn = document.querySelector('.mobile-btn');
+        const soundBtn = document.querySelector('.sound-btn');
 
-        function changeLanguage() {
-            currentLang = document.getElementById('language').value;
-            document.querySelectorAll('[data-lang]').forEach(el => {
-                el.style.display = (el.getAttribute('data-lang') === currentLang) ? 'block' : 'none';
+        // Дыбыс эффектілері
+        const jumpSound = document.getElementById('jumpSound');
+        const scoreSound = document.getElementById('scoreSound');
+        const hitSound = document.getElementById('hitSound');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+
+        let soundEnabled = true;
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            soundBtn.textContent = soundEnabled ? '🔊 Дыбыс қосулы' : '🔇 Дыбыс өшірулі';
+            if (!soundEnabled) {
+                backgroundMusic.pause();
+            } else if (gameRunning) {
+                backgroundMusic.play().catch(() => {});
+            }
+        }
+
+        // Аяз Ата
+        let dino = {
+            x: 100,
+            y: 300,
+            width: 60,
+            height: 60,
+            dy: 0,
+            gravity: 0.8,
+            jumpPower: -15,
+            grounded: true,
+            frame: 0
+        };
+
+        let trees = [];
+        let treeSpeed = 4;
+        let score = 0;
+        let gameRunning = false;
+        let gameOver = false;
+
+        function drawDino() {
+            const frame = Math.floor(dino.frame / 10) % 2;
+            ctx.save();
+            ctx.translate(dino.x + dino.width / 2, dino.y + dino.height);
+
+            // Пальто
+            ctx.fillStyle = '#FF0000';
+            ctx.fillRect(-30, -60, 60, 60);
+
+            // Сақал
+            ctx.fillStyle = 'white';
+            ctx.fillRect(-25, -40, 50, 30);
+
+            // Бас
+            ctx.fillStyle = '#FFDAB9';
+            ctx.beginPath();
+            ctx.arc(0, -45, 15, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Шляпа
+            ctx.fillStyle = '#FF0000';
+            ctx.fillRect(-20, -70, 40, 15);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(-25, -80, 50, 10);
+
+            // Аяқтар анимациясы
+            ctx.fillStyle = '#FF0000';
+            if (dino.grounded) {
+                const legOffset = frame === 0 ? 10 : -10;
+                ctx.fillRect(-15 + legOffset, 0, 15, 20);
+                ctx.fillRect(0 - legOffset, 0, 15, 20);
+            } else {
+                ctx.fillRect(-20, 0, 15, 20);
+                ctx.fillRect(5, 0, 15, 20);
+            }
+
+            ctx.restore();
+            if (gameRunning) dino.frame++;
+        }
+
+        function drawTree(x, y) {
+            ctx.fillStyle = '#228B22';
+            ctx.beginPath();
+            ctx.moveTo(x + 25, y);
+            ctx.lineTo(x, y + 50);
+            ctx.lineTo(x + 50, y + 50);
+            ctx.fill();
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(x + 20, y + 50, 10, 20);
+        }
+
+        // Қар анимациясы
+        function createSnow() {
+            if (!gameRunning) return;
+            const snow = document.createElement('div');
+            snow.classList.add('snowflake');
+            snow.textContent = ['❄', '❅', '❆'][Math.floor(Math.random() * 3)];
+            snow.style.left = Math.random() * window.innerWidth + 'px';
+            snow.style.animationDuration = Math.random() * 5 + 8 + 's';
+            snow.style.fontSize = Math.random() * 10 + 15 + 'px';
+            document.body.appendChild(snow);
+            setTimeout(() => snow.remove(), 15000);
+        }
+        setInterval(createSnow, 150);
+
+        function update() {
+            if (!gameRunning || gameOver) return;
+
+            if (!dino.grounded) {
+                dino.dy += dino.gravity;
+                dino.y += dino.dy;
+                if (dino.y >= 300) {
+                    dino.y = 300;
+                    dino.dy = 0;
+                    dino.grounded = true;
+                }
+            }
+
+            if (Math.random() < 0.02) {
+                trees.push({ x: canvas.width, y: 300 });
+            }
+
+            trees.forEach((tree, index) => {
+                tree.x -= treeSpeed;
+                if (tree.x + 50 < 0) {
+                    trees.splice(index, 1);
+                    score += 100;
+                    scoreEl.textContent = `Ұпай: ${score}`;
+                    if (soundEnabled) scoreSound.play();
+                }
             });
-            updateGreeting();
-        }
 
-        function startJourney() {
-            const inputName = document.getElementById('name').value.trim();
-            name = inputName || 'Досым';
-            document.getElementById('form').style.display = 'none';
-            nextCity();
-            document.getElementById('nextBtn').style.display = 'block';
-            confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
-        }
-
-        function nextCity() {
-            cities.forEach(c => c.style.display = 'none');
-            currentCity = (currentCity + 1) % cities.length;
-            cities[currentCity].style.display = 'block';
-            updateGreeting();
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-        }
-
-        function updateGreeting() {
-            document.querySelectorAll('.greeting').forEach(el => {
-                if (el.style.display !== 'none') {
-                    el.innerHTML = el.innerHTML.replace(/\[name\]/g, '<strong style="color:#ffeb3b;">' + name + '</strong>');
+            trees.forEach(tree => {
+                if (dino.x < tree.x + 50 && dino.x + dino.width > tree.x &&
+                    dino.y < tree.y + 70 && dino.y + dino.height > tree.y) {
+                    gameOver = true;
+                    finalScoreEl.textContent = score;
+                    gameOverEl.style.display = 'block';
+                    gameRunning = false;
+                    if (soundEnabled) hitSound.play();
+                    backgroundMusic.pause();
                 }
             });
         }
 
-        // Қар түсіру
-        function createSnow() {
-            const snow = document.createElement('div');
-            snow.classList.add('snowflake');
-            snow.textContent = ['❄', '❅', '❆'][Math.floor(Math.random() * 3)];
-            snow.style.left = Math.random() * 100 + 'vw';
-            snow.style.animationDuration = Math.random() * 8 + 8 + 's';
-            snow.style.opacity = Math.random() * 0.5 + 0.5;
-            snow.style.fontSize = Math.random() * 15 + 15 + 'px';
-            document.body.appendChild(snow);
-            setTimeout(() => snow.remove(), 16000);
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 340, canvas.width, 60);
+
+            trees.forEach(tree => drawTree(tree.x, tree.y));
+            drawDino();
         }
-        setInterval(createSnow, 200);
+
+        function jump() {
+            if (dino.grounded && gameRunning) {
+                dino.dy = dino.jumpPower;
+                dino.grounded = false;
+                if (soundEnabled) jumpSound.play();
+            }
+        }
+
+        function startGame() {
+            gameRunning = true;
+            gameOver = false;
+            startBtn.style.display = 'none';
+            mobileBtn.style.display = 'block';
+            score = 0;
+            trees = [];
+            scoreEl.textContent = 'Ұпай: 0';
+            gameOverEl.style.display = 'none';
+            if (soundEnabled) {
+                backgroundMusic.play().catch(() => {});
+            }
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'ArrowUp') {
+                e.preventDefault();
+                jump();
+            }
+        });
+
+        canvas.addEventListener('click', jump);
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            jump();
+        });
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+
+        if ('ontouchstart' in window) {
+            mobileBtn.style.display = 'block';
+        }
     </script>
 </body>
 </html>
