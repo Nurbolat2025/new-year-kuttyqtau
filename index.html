@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Жаңа Жыл 2026</title>
+    <title>Global New Year 2026</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0d47a1">
@@ -28,38 +28,26 @@
 
         /* --- ЖОҒАРҒЫ ТҰРАҚТЫ МӘЗІР --- */
         .top-controls {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            gap: 10px;
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            display: flex; gap: 10px;
             background: rgba(0, 0, 0, 0.3);
-            padding: 8px 15px;
-            border-radius: 30px;
+            padding: 8px 15px; border-radius: 30px;
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255,255,255,0.2);
         }
 
         .icon-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 42px; height: 42px;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+            background: rgba(255, 255, 255, 0.2); color: white;
+            border: none; border-radius: 50%;
+            width: 42px; height: 42px; font-size: 20px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
             transition: 0.3s;
         }
         .icon-btn:hover { background: rgba(255, 255, 255, 0.4); transform: scale(1.1); }
-        
         .icon-btn.playing { 
-            background: #00e676; 
-            box-shadow: 0 0 10px #00e676;
+            background: #00e676; box-shadow: 0 0 10px #00e676;
             animation: pulse-green 1.5s infinite; 
         }
-
         @keyframes pulse-green {
             0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(0, 230, 118, 0); }
@@ -67,15 +55,9 @@
         }
 
         select.lang-select {
-            background: rgba(255, 255, 255, 0.95);
-            color: #0d47a1;
-            border: none;
-            border-radius: 20px;
-            padding: 5px 15px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            outline: none;
+            background: rgba(255, 255, 255, 0.95); color: #0d47a1;
+            border: none; border-radius: 20px; padding: 5px 15px;
+            font-weight: bold; font-size: 14px; cursor: pointer; outline: none;
         }
 
         /* --- НЕГІЗГІ КАРТОЧКА --- */
@@ -83,22 +65,18 @@
         
         .card {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 30px;
-            border-radius: 30px;
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 30px; border-radius: 30px;
             border: 1px solid rgba(255,255,255,0.3);
             box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            width: 85%; max-width: 420px;
-            margin-top: 60px;
+            width: 85%; max-width: 420px; margin-top: 60px;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         input {
             width: 90%; padding: 15px; margin: 15px 0;
             border-radius: 15px; border: none; font-size: 18px; text-align: center;
-            background: rgba(255,255,255,0.9);
-            color: #333;
+            background: rgba(255,255,255,0.9); color: #333;
         }
         
         button.main-btn {
@@ -118,39 +96,27 @@
 
         .hidden { display: none; }
         
-        /* Қала және Өлең стильдері */
         .city-name { font-size: 2rem; color: #84ffff; margin: 5px 0; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         .greeting-text { font-size: 1.2rem; margin: 20px 0; line-height: 1.5; color: #fff; }
         
         .poem-box {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px; border-radius: 20px;
-            margin: 20px 0;
-            border-left: 5px solid #ffd700;
-            font-style: italic;
-            white-space: pre-line; 
-            color: #fffde7;
-            font-size: 1.1rem;
-            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 20px;
+            margin: 20px 0; border-left: 5px solid #ffd700;
+            font-style: italic; white-space: pre-line;
+            color: #fffde7; font-size: 1.1rem; line-height: 1.6;
             text-shadow: 1px 1px 2px black;
         }
 
-        /* Қар */
         .snowflake {
             position: absolute; color: #fff; opacity: 0.9; 
             pointer-events: none; animation: fall linear infinite; z-index: -1;
         }
         @keyframes fall { to { transform: translateY(105vh); } }
         
-        /* Сағат стилі */
         #localTime {
-            font-family: 'Courier New', monospace; 
-            font-weight: bold;
-            color: #ffd700; 
-            background: rgba(0,0,0,0.6); 
-            padding: 8px 15px; 
-            border-radius: 20px; 
-            display: inline-block;
+            font-family: 'Courier New', monospace; font-weight: bold;
+            color: #ffd700; background: rgba(0,0,0,0.6); 
+            padding: 8px 15px; border-radius: 20px; display: inline-block;
             border: 1px solid rgba(255, 215, 0, 0.3);
         }
     </style>
@@ -163,11 +129,15 @@
     </audio>
 
     <div class="top-controls">
-        <button id="musicBtn" class="icon-btn" onclick="toggleMusic()" title="Музыка">🔇</button>
+        <button id="musicBtn" class="icon-btn" onclick="toggleMusic()" title="Music">🔇</button>
         <select id="uiLangSelect" class="lang-select" onchange="changeUILanguage()">
             <option value="kk">🇰🇿 ҚАЗ</option>
             <option value="ru">🇷🇺 РУС</option>
             <option value="en">🇺🇸 ENG</option>
+            <option value="tr">🇹🇷 TUR</option>
+            <option value="fr">🇫🇷 FRA</option>
+            <option value="zh">🇨🇳 CHN</option>
+            <option value="ar">🇦🇪 ARA</option>
         </select>
     </div>
 
@@ -189,22 +159,26 @@
         
         <div id="poemBox" class="poem-box">...</div>
 
-        <button onclick="nextCity()" class="main-btn" id="btnNext">Келесі ел ✈️</button>
-        <button onclick="shareGreeting()" class="main-btn share-btn" id="btnShare">Бөлісу 🔗</button>
+        <button onclick="nextCity()" class="main-btn" id="btnNext">✈️</button>
+        <button onclick="shareGreeting()" class="main-btn share-btn" id="btnShare">🔗</button>
     </div>
 
     <script>
-        // --- ДЕРЕКТЕР ---
+        // --- БАРЛЫҚ ТІЛДЕГІ ИНТЕРФЕЙС МӘТІНДЕРІ (Түймелер қоса) ---
         const uiText = {
             kk: { title: "Жаңа Жыл 2026", desc: "Есіміңізді жазып, саяхатты бастаңыз!", ph: "Атыңыз...", start: "Бастау 🚀", next: "Келесі ел ✈️", share: "Бөлісу 🔗", copied: "Көшірілді!" },
             ru: { title: "Новый Год 2026", desc: "Введите имя и начните путешествие!", ph: "Ваше имя...", start: "Поехали 🚀", next: "Следующая страна ✈️", share: "Поделиться 🔗", copied: "Скопировано!" },
-            en: { title: "New Year 2026", desc: "Enter your name to start!", ph: "Your name...", start: "Start Journey 🚀", next: "Next Country ✈️", share: "Share 🔗", copied: "Copied!" }
+            en: { title: "New Year 2026", desc: "Enter your name to start!", ph: "Your name...", start: "Start Journey 🚀", next: "Next Country ✈️", share: "Share 🔗", copied: "Copied!" },
+            tr: { title: "Yeni Yıl 2026", desc: "Adınızı girin ve yolculuğa başlayın!", ph: "Adınız...", start: "Başla 🚀", next: "Sonraki Ülke ✈️", share: "Paylaş 🔗", copied: "Kopyalandı!" },
+            fr: { title: "Nouvel An 2026", desc: "Entrez votre nom pour commencer !", ph: "Votre nom...", start: "Commencer 🚀", next: "Pays Suivant ✈️", share: "Partager 🔗", copied: "Copié !" },
+            zh: { title: "2026 新年", desc: "输入您的名字开始旅程！", ph: "你的名字...", start: "开始 🚀", next: "下一个国家 ✈️", share: "分享 🔗", copied: "已复制！" },
+            ar: { title: "السنة الجديدة 2026", desc: "أدخل اسمك لتبدأ الرحلة!", ph: "اسمك...", start: "يبدأ 🚀", next: "البلد التالي ✈️", share: "مشاركة 🔗", copied: "نسخ!" }
         };
 
+        // --- ҚҰТТЫҚТАУЛАР МЕН ӨЛЕҢДЕР ---
         const contentData = {
             kk: {
                 greet: "Құрметті {name}, Жаңа жылыңызбен! Осы қаланың сұлулығындай өміріңіз жарқын болсын!",
-                // ТҮЗЕТІЛГЕН НҰСҚА:
                 poem: "Келді міне Жаңа жыл жарқырап,\nАқ қар жатыр далада жалтырап.\nБаршаңызға бақыт пен құт әкеп,\nБақ-береке ағып келсін сарқырап!" 
             },
             ru: {
@@ -263,12 +237,15 @@
         function changeUILanguage() {
             const lang = document.getElementById('uiLangSelect').value;
             const t = uiText[lang];
+            
+            // Интерфейсті жаңарту
             document.getElementById('appTitle').textContent = t.title;
             document.getElementById('appDesc').textContent = t.desc;
             document.getElementById('nameInput').placeholder = t.ph;
             document.getElementById('btnStart').textContent = t.start;
-            document.getElementById('btnNext').textContent = t.next;
-            document.getElementById('btnShare').textContent = t.share;
+            
+            // Бастапқы беттегі түймелер интерфейс тілінде қалады
+            // Ал Саяхат бетіне өткенде олар қала тіліне ауысады
         }
 
         function toggleMusic() {
@@ -295,8 +272,6 @@
             document.getElementById('journeyScreen').classList.remove('hidden');
             
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-            
-            // ЕҢ МАҢЫЗДЫСЫ: Түйме басылғанда музыка қосылады
             if(!isMusicPlaying) toggleMusic();
             
             updateContent();
@@ -305,12 +280,24 @@
 
         function updateContent() {
             const city = destinations[currentDestIndex];
+            // 1. Қаланың тілін анықтау
             const langCode = contentData[city.lang] ? city.lang : 'en';
+            
+            // 2. Құттықтау мәтінін алу
             const data = contentData[langCode];
 
+            // 3. Сол тілдегі интерфейс сөздерін (Түймелерді) алу
+            const localUI = uiText[langCode] || uiText['en'];
+
+            // 4. Мәтіндерді жаңарту
             document.getElementById('cityName').textContent = city.name;
             document.getElementById('greetingMsg').innerHTML = data.greet.replace("{name}", `<b style="color:#ffd700">${userName}</b>`);
             document.getElementById('poemBox').textContent = data.poem;
+
+            // 5. ТҮЙМЕЛЕРДІҢ ТІЛІН АУЫСТЫРУ (Иммерсивті эффект)
+            document.getElementById('btnNext').innerHTML = localUI.next; // Мысалы: Pays Suivant ✈️
+            document.getElementById('btnShare').innerHTML = localUI.share; // Мысалы: Partager 🔗
+
             updateTime();
         }
 
@@ -338,15 +325,20 @@
 
         function shareGreeting() {
             const url = window.location.protocol + "//" + window.location.host + window.location.pathname + "?name=" + encodeURIComponent(userName);
-            const lang = document.getElementById('uiLangSelect').value;
+            
+            // "Көшірілді" деген сөз де сол елдің тілінде шығуы керек
+            const city = destinations[currentDestIndex];
+            const langCode = contentData[city.lang] ? city.lang : 'en';
+            const localUI = uiText[langCode] || uiText['en'];
+
             if (navigator.share) {
                 navigator.share({ title: 'New Year Wish', url: url });
             } else {
                 navigator.clipboard.writeText(url).then(() => {
                     const btn = document.getElementById('btnShare');
-                    const original = btn.textContent;
-                    btn.textContent = uiText[lang].copied;
-                    setTimeout(() => btn.textContent = original, 2000);
+                    const original = btn.innerHTML;
+                    btn.textContent = localUI.copied; // "Copié!", "Көшірілді!"
+                    setTimeout(() => btn.innerHTML = original, 2000);
                 });
             }
         }
