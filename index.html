@@ -54,10 +54,11 @@
             text-shadow: 1px 1px 3px #000;
         }
         .time-info {
-            font-size: 18px;
+            font-size: 20px;
             color: #ffeb3b;
-            margin: 10px;
-            text-shadow: 1px 1px 3px #000;
+            margin: 15px;
+            text-shadow: 2px 2px 4px #000;
+            font-weight: bold;
         }
         button {
             background: #d32f2f;
@@ -206,7 +207,7 @@
         </div>
     </div>
 
-    <button onclick="nextCity()" style="display:none;" id="nextBtn" data-lang="kk">Келесі қалаға саяхат ➜ 🎉</button>
+    <button onclick="nextCity()" style="display:none;" id="nextBtnKk" data-lang="kk">Келесі қалаға саяхат ➜ 🎉</button>
     <button onclick="nextCity()" style="display:none;" id="nextBtnRu" data-lang="ru">Следующий город ➜ 🎉</button>
     <button onclick="nextCity()" style="display:none;" id="nextBtnEn" data-lang="en">Next city ➜ 🎉</button>
     <button onclick="nextCity()" style="display:none;" id="nextBtnAr" data-lang="ar">المدينة التالية ➜ 🎉</button>
@@ -219,8 +220,8 @@
         const cities = document.querySelectorAll('.city');
         const timeInfo = document.getElementById('timeInfo');
 
-        const nextButtons = {
-            kk: document.getElementById('nextBtn'),
+        const nextBtns = {
+            kk: document.getElementById('nextBtnKk'),
             ru: document.getElementById('nextBtnRu'),
             en: document.getElementById('nextBtnEn'),
             ar: document.getElementById('nextBtnAr'),
@@ -232,11 +233,11 @@
             document.querySelectorAll('[data-lang]').forEach(el => {
                 el.style.display = (el.getAttribute('data-lang') === currentLang) ? 'block' : 'none';
             });
-            // Түймені ауыстыру
-            Object.keys(nextButtons).forEach(lang => {
-                nextButtons[lang].style.display = (lang === currentLang) ? 'block' : 'none';
+            Object.keys(nextBtns).forEach(lang => {
+                nextBtns[lang].style.display = (lang === currentLang) ? 'block' : 'none';
             });
             updateGreeting();
+            updateTime();
         }
 
         function startJourney() {
@@ -244,32 +245,20 @@
             name = inputName || 'Досым';
             document.getElementById('form').style.display = 'none';
             nextCity();
-            document.querySelectorAll('#nextBtn, #nextBtnRu, #nextBtnEn, #nextBtnAr, #nextBtnMn').forEach(btn => {
-                btn.style.display = (btn.getAttribute('data-lang') === currentLang) ? 'block' : 'none';
+            Object.keys(nextBtns).forEach(lang => {
+                nextBtns[lang].style.display = (lang === currentLang) ? 'block' : 'none';
             });
             timeInfo.style.display = 'block';
             confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+            updateTime();
         }
 
         function nextCity() {
             cities.forEach(c => c.style.display = 'none');
             currentCity = (currentCity + 1) % cities.length;
-            const currentCityEl = cities[currentCity];
-            currentCityEl.style.display = 'block';
+            cities[currentCity].style.display = 'block';
             updateGreeting();
-
-            // Уақытты көрсету
-            const timezone = currentCityEl.getAttribute('data-timezone');
-            const now = new Date();
-            const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: false };
-            const formatter = new Intl.DateTimeFormat(currentLang, options);
-            const timeStr = formatter.format(now);
-            timeInfo.textContent = currentLang === 'kk' ? `Қазір сағат: ${timeStr}` :
-                                  currentLang === 'ru' ? `Сейчас время: ${timeStr}` :
-                                  currentLang === 'en' ? `Current time: ${timeStr}` :
-                                  currentLang === 'ar' ? `الوقت الحالي: ${timeStr}` :
-                                  `Одоогийн цаг: ${timeStr}`;
-
+            updateTime();
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
         }
 
@@ -279,6 +268,24 @@
                     el.innerHTML = el.innerHTML.replace(/\[name\]/g, '<strong style="color:#ffeb3b;">' + name + '</strong>');
                 }
             });
+        }
+
+        function updateTime() {
+            const currentCityEl = cities[currentCity];
+            const timezone = currentCityEl.getAttribute('data-timezone');
+            const now = new Date();
+            const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: false };
+            const formatter = new Intl.DateTimeFormat(currentLang, options);
+            const timeStr = formatter.format(now);
+
+            let prefix = '';
+            if (currentLang === 'kk') prefix = 'Қазір сағат: ';
+            else if (currentLang === 'ru') prefix = 'Сейчас время: ';
+            else if (currentLang === 'en') prefix = 'Current time: ';
+            else if (currentLang === 'ar') prefix = 'الوقت الحالي: ';
+            else if (currentLang === 'mn') prefix = 'Одоогийн цаг: ';
+
+            timeInfo.textContent = prefix + timeStr;
         }
 
         // Қар түсіру
