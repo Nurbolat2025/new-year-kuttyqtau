@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Жаңа Жыл Саяхаты Құттықтауы</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(to bottom, #e0f7fa, #80deea); 
+            text-align: center; 
+            padding: 20px; 
+            color: #333; 
+            margin: 0;
+        }
+        h1 { color: #d32f2f; font-size: 28px; }
+        .greeting { 
+            font-size: 22px; 
+            color: #1b5e20; 
+            margin: 30px; 
+            padding: 25px; 
+            background: rgba(255,255,255,0.9); 
+            border-radius: 20px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        button { 
+            background-color: #ff5722; 
+            color: white; 
+            padding: 15px 30px; 
+            border: none; 
+            cursor: pointer; 
+            font-size: 18px; 
+            border-radius: 12px; 
+            margin: 15px;
+        }
+        #nextBtn { background-color: #4caf50; }
+        select, input { 
+            padding: 12px; 
+            font-size: 18px; 
+            margin: 10px; 
+            border-radius: 8px; 
+            border: 1px solid #ccc;
+        }
+        .city { display: none; }
+    </style>
+</head>
+<body>
+
+    <h1 data-lang="kk">Жаңа Жылмен! Әлемдік Саяхат Құттықтауы 🎉</h1>
+    <h1 data-lang="ru" style="display:none;">С Новым Годом! Мировое Путешествие Поздравления 🎉</h1>
+    <h1 data-lang="en" style="display:none;">Happy New Year! World Travel Greeting 🎉</h1>
+    <h1 data-lang="ar" style="display:none;">عام سعيد! تهنئة سفر عالمية 🎉</h1>
+    <h1 data-lang="mn" style="display:none;">Шинэ оны мэнд! Дэлхийн аялалын мэндчилгээ 🎉</h1>
+
+    <p data-lang="kk">Атыңызды енгізіп, тілді таңдаңыз да, әлемдік саяхатты бастаңыз!</p>
+    <p data-lang="ru" style="display:none;">Введите имя, выберите язык и начните мировое путешествие!</p>
+    <p data-lang="en" style="display:none;">Enter your name, choose language and start the world journey!</p>
+    <p data-lang="ar" style="display:none;">أدخل اسمك، اختر اللغة وبدء الرحلة العالمية!</p>
+    <p data-lang="mn" style="display:none;">Нэрээ оруулна уу, хэл сонгоод дэлхийн аялалаа эхлүүл!</p>
+
+    <select id="language" onchange="changeLanguage()">
+        <option value="kk">Қазақ</option>
+        <option value="ru">Русский</option>
+        <option value="en">English</option>
+        <option value="ar">العربية</option>
+        <option value="mn">Монгол</option>
+    </select>
+
+    <form id="form">
+        <label data-lang="kk">Атыңыз:</label>
+        <label data-lang="ru" style="display:none;">Имя:</label>
+        <label data-lang="en" style="display:none;">Name:</label>
+        <label data-lang="ar" style="display:none;">الاسم:</label>
+        <label data-lang="mn" style="display:none;">Нэр:</label><br>
+        <input type="text" id="name" placeholder="Мысалы: Айша" required>
+        <button type="button" onclick="startJourney()">Бастау</button>
+    </form>
+
+    <div id="cities">
+        <!-- 1. Алматы -->
+        <div class="city">
+            <h2 data-lang="kk">Алматы, Қазақстан</h2>
+            <h2 data-lang="ru" style="display:none;">Алматы, Казахстан</h2>
+            <h2 data-lang="en" style="display:none;">Almaty, Kazakhstan</h2>
+            <h2 data-lang="ar" style="display:none;">ألماتي، كازاخستان</h2>
+            <h2 data-lang="mn" style="display:none;">Алматы, Казахстан</h2>
+            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Алматыда шырша астында бақытқа толы жыл тілеймін!</p>
+            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Под елкой в Алматы желаю счастья!</p>
+            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! Under the tree in Almaty, I wish you happiness!</p>
+            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! تحت الشجرة في ألماتي أتمنى لك السعادة!</p>
+            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Алматыд модны доор аз жаргалтай байг!</p>
+        </div>
+
+        <!-- 2. Нью-Йорк -->
+        <div class="city">
+            <h2 data-lang="kk">Нью-Йорк, АҚШ</h2>
+            <h2 data-lang="ru" style="display:none;">Нью-Йорк, США</h2>
+            <h2 data-lang="en" style="display:none;">New York, USA</h2>
+            <h2 data-lang="ar" style="display:none;">نيويورك، الولايات المتحدة</h2>
+            <h2 data-lang="mn" style="display:none;">Нью-Йорк, АНУ</h2>
+            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Таймс-Скверде шар түскенде арманыңыз орындалсын!</p>
+            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Когда шар опустится на Таймс-Сквер, пусть сбудутся мечты!</p>
+            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! When the ball drops in Times Square, may your dreams come true!</p>
+            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! عندما تسقط الكرة في تايمز سكوير، تحقق أحلامك!</p>
+            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Таймс Скверд бөмбөг унахад мөрөөдөл чинь биелнэ!</p>
+        </div>
+
+        <!-- 3. Токио -->
+        <div class="city">
+            <h2 data-lang="kk">Токио, Жапония</h2>
+            <h2 data-lang="ru" style="display:none;">Токио, Япония</h2>
+            <h2 data-lang="en" style="display:none;">Tokyo, Japan</h2>
+            <h2 data-lang="ar" style="display:none;">طوكيو، اليابان</h2>
+            <h2 data-lang="mn" style="display:none;">Токио, Япон</h2>
+            <p class="greeting" data-lang="kk">Құрметті [name], Akemashite omedetou! Жаңа жылда жаңа бастамалар болсын!</p>
+            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], Акэмашитэ омэдэто! Новые начинания в Новом году!</p>
+            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Akemashite omedetou! New beginnings in the New Year!</p>
+            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، أكيماشيتي أوميديتو! بدايات جديدة في العام الجديد!</p>
+            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Акемашите омедето! Шинэ жилд шинэ эхлэл!</p>
+        </div>
+
+        <!-- 4. Дубай -->
+        <div class="city">
+            <h2 data-lang="kk">Дубай, БАӘ</h2>
+            <h2 data-lang="ru" style="display:none;">Дубай, ОАЭ</h2>
+            <h2 data-lang="en" style="display:none;">Dubai, UAE</h2>
+            <h2 data-lang="ar" style="display:none;">دبي، الإمارات</h2>
+            <h2 data-lang="mn" style="display:none;">Дубай, АНЭУ</h2>
+            <p class="greeting" data-lang="kk">Құрметті [name], Жаңа жыл құтты болсын! Бурдж Халифада отшашу астында бақыт тілеймін!</p>
+            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! Под фейерверком у Бурдж Халифа желаю счастья!</p>
+            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! Under the fireworks at Burj Khalifa!</p>
+            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! تحت الألعاب النارية في برج خليفة!</p>
+            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Бурж Халифагийн салют доор аз жаргал!</p>
+        </div>
+
+        <!-- 5. Улан-Батор -->
+        <div class="city">
+            <h2 data-lang="kk">Улан-Батор, Моңғолия</h2>
+            <h2 data-lang="ru" style="display:none;">Улан-Батор, Монголия</h2>
+            <h2 data-lang="en" style="display:none;">Ulaanbaatar, Mongolia</h2>
+            <h2 data-lang="ar" style="display:none;">أولان باتور، منغوليا</h2>
+            <h2 data-lang="mn" style="display:none;">Улаанбаатар, Монгол</h2>
+            <p class="greeting" data-lang="kk">Құрметті [name], Шинэ оны мэнд! Далада жаңа жылды қарсы алып, денсаулық тілеймін!</p>
+            <p class="greeting" data-lang="ru" style="display:none;">Уважаемый [name], С Новым годом! В степи встречайте Новый год с здоровьем!</p>
+            <p class="greeting" data-lang="en" style="display:none;">Dear [name], Happy New Year! In the steppe, welcome the New Year with health!</p>
+            <p class="greeting" data-lang="ar" style="display:none;">عزيزي [name]، عام سعيد! في السهوب، استقبل العام الجديد بالصحة!</p>
+            <p class="greeting" data-lang="mn" style="display:none;">Эрхэм [name], Шинэ оны мэнд! Талд шинэ жылыйг эрүүл мэндээр угтъя!</p>
+        </div>
+    </div>
+
+    <button onclick="nextCity()" style="display:none;" id="nextBtn">Келесі қалаға саяхат ➜</button>
+
+    <script>
+        let currentLang = 'kk';
+        let name = '';
+        let currentCity = 0;
+        const cities = document.querySelectorAll('.city');
+
+        function changeLanguage() {
+            currentLang = document.getElementById('language').value;
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                el.style.display = (el.getAttribute('data-lang') === currentLang) ? 'block' : 'none';
+            });
+            updateGreeting();
+        }
+
+        function startJourney() {
+            name = document.getElementById('name').value.trim();
+            if (name === '') name = 'Досым';
+            document.getElementById('form').style.display = 'none';
+            nextCity();
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        function nextCity() {
+            cities.forEach(c => c.style.display = 'none');
+            currentCity = (currentCity + 1) % cities.length;
+            cities[currentCity].style.display = 'block';
+            updateGreeting();
+        }
+
+        function updateGreeting() {
+            document.querySelectorAll('.greeting').forEach(el => {
+                if (el.style.display !== 'none') {
+                    el.innerHTML = el.innerHTML.replace(/\[name\]/g, '<strong>' + name + '</strong>');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
