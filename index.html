@@ -3,348 +3,422 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global New Year 2026</title>
+    <title>Берекелі Жаңа Жыл 2026</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0d47a1">
+    <meta name="theme-color" content="#1565C0">
     <link rel="icon" type="image/png" href="icon-192.png">
 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         body {
             margin: 0; padding: 0;
             min-height: 100vh;
-            background: linear-gradient(to bottom, #021B79, #0575E6);
             color: white;
             text-align: center;
-            font-family: 'Segoe UI', sans-serif;
-            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            background: #000;
         }
 
-        /* --- ЖОҒАРҒЫ ТҰРАҚТЫ МӘЗІР --- */
+        /* --- КАРТА ФОН --- */
+        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 20, 50, 0.6); /* Көкшіл күңгірт фон */
+            z-index: 1; pointer-events: none; 
+        }
+
+        /* --- ЖОҒАРҒЫ МӘЗІР --- */
         .top-controls {
             position: fixed; top: 20px; right: 20px; z-index: 1000;
             display: flex; gap: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 8px 15px; border-radius: 30px;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.2);
         }
-
         .icon-btn {
             background: rgba(255, 255, 255, 0.2); color: white;
-            border: none; border-radius: 50%;
-            width: 42px; height: 42px; font-size: 20px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.3); border-radius: 50%;
+            width: 45px; height: 45px; font-size: 20px; cursor: pointer;
+            backdrop-filter: blur(5px);
         }
-        .icon-btn:hover { background: rgba(255, 255, 255, 0.4); transform: scale(1.1); }
-        .icon-btn.playing { 
-            background: #00e676; box-shadow: 0 0 10px #00e676;
-            animation: pulse-green 1.5s infinite; 
-        }
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(0, 230, 118, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+        .lang-select {
+            background: rgba(255, 255, 255, 0.9); border-radius: 20px; padding: 5px 15px;
+            font-weight: bold; border: none; cursor: pointer;
         }
 
-        select.lang-select {
-            background: rgba(255, 255, 255, 0.95); color: #0d47a1;
-            border: none; border-radius: 20px; padding: 5px 15px;
-            font-weight: bold; font-size: 14px; cursor: pointer; outline: none;
-        }
-
-        /* --- НЕГІЗГІ КАРТОЧКА --- */
-        h1 { color: #ffd700; text-shadow: 0 0 20px #ff8c00; font-size: 2rem; margin: 20px 0; }
-        
+        /* --- ОРТАҢҒЫ БЛОК --- */
         .card {
+            position: relative; z-index: 100;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            padding: 30px; border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            width: 85%; max-width: 420px; margin-top: 60px;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 25px; border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            width: 90%; max-width: 450px;
+            transition: all 0.5s ease;
         }
 
-        input {
-            width: 90%; padding: 15px; margin: 15px 0;
-            border-radius: 15px; border: none; font-size: 18px; text-align: center;
-            background: rgba(255,255,255,0.9); color: #333;
+        h1 { color: #FFD700; text-shadow: 0 2px 10px rgba(0,0,0,0.5); font-size: 1.8rem; margin: 10px 0; }
+
+        /* Таймер */
+        .countdown-box {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.4);
+            color: #84ffff;
+            padding: 10px; border-radius: 10px;
+            margin: 10px 0;
+            font-size: 1.2rem; border: 1px solid #84ffff;
         }
-        
-        button.main-btn {
-            width: 100%; padding: 16px; margin: 10px 0;
-            border-radius: 15px; border: none; font-size: 18px; font-weight: bold;
-            background: linear-gradient(135deg, #FF512F 0%, #DD2476 100%);
-            color: white; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(221, 36, 118, 0.5);
+
+        /* Сандық (Chest) */
+        .chest-container {
+            font-size: 80px; cursor: pointer;
+            margin: 20px 0;
             transition: transform 0.2s;
+            animation: bounce 2s infinite;
         }
-        button.main-btn:active { transform: scale(0.95); }
-        
-        button.share-btn {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            box-shadow: 0 5px 15px rgba(56, 239, 125, 0.4);
-        }
+        .chest-container:hover { transform: scale(1.1); }
+        .chest-hint { font-size: 0.9rem; color: #ccc; margin-top: -10px; margin-bottom: 20px;}
 
-        .hidden { display: none; }
-        
-        .city-name { font-size: 2rem; color: #84ffff; margin: 5px 0; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
-        .greeting-text { font-size: 1.2rem; margin: 20px 0; line-height: 1.5; color: #fff; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* Мәтіндер */
+        .city-name { font-size: 2rem; color: #fff; text-shadow: 2px 2px 4px #000; }
+        .greeting-text { font-size: 1.1rem; line-height: 1.5; color: #fff; margin: 15px 0; }
         
         .poem-box {
-            background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 20px;
-            margin: 20px 0; border-left: 5px solid #ffd700;
+            background: rgba(0, 50, 0, 0.3); /* Жасыл реңк (Ислам) */
+            padding: 15px; border-radius: 15px;
+            margin: 15px 0; border-left: 5px solid #FFD700;
             font-style: italic; white-space: pre-line;
-            color: #fffde7; font-size: 1.1rem; line-height: 1.6;
-            text-shadow: 1px 1px 2px black;
+            color: #fffde7; font-size: 1rem;
         }
 
-        .snowflake {
-            position: absolute; color: #fff; opacity: 0.9; 
-            pointer-events: none; animation: fall linear infinite; z-index: -1;
+        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; text-align: center; font-size: 16px; }
+        .main-btn {
+            width: 100%; padding: 14px; margin: 5px 0;
+            border-radius: 12px; border: none; font-size: 16px; font-weight: bold;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%);
+            color: #000; cursor: pointer;
         }
-        @keyframes fall { to { transform: translateY(105vh); } }
-        
-        #localTime {
-            font-family: 'Courier New', monospace; font-weight: bold;
-            color: #ffd700; background: rgba(0,0,0,0.6); 
-            padding: 8px 15px; border-radius: 20px; display: inline-block;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-        }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
+    <div id="map"></div>
+    <div class="overlay"></div>
+
     <audio id="bgMusic" loop preload="auto">
-        <source src="https://incompetech.com/music/royalty-free/mp3-royaltyfree/Jingle%20Bells.mp3" type="audio/mp3">
-        <source src="https://soundbible.com/mp3/Merry_Christmas-Merry_Christmas-1120867056.mp3" type="audio/mp3">
+        <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_1f23348651.mp3" type="audio/mp3">
     </audio>
 
     <div class="top-controls">
-        <button id="musicBtn" class="icon-btn" onclick="toggleMusic()" title="Music">🔇</button>
-        <select id="uiLangSelect" class="lang-select" onchange="changeUILanguage()">
+        <button id="musicBtn" class="icon-btn" onclick="toggleMusic()">🔇</button>
+        <select id="uiLangSelect" class="lang-select" onchange="changeLanguage()">
             <option value="kk">🇰🇿 ҚАЗ</option>
             <option value="ru">🇷🇺 РУС</option>
             <option value="en">🇺🇸 ENG</option>
             <option value="tr">🇹🇷 TUR</option>
-            <option value="fr">🇫🇷 FRA</option>
-            <option value="zh">🇨🇳 CHN</option>
             <option value="ar">🇦🇪 ARA</option>
         </select>
     </div>
 
     <div id="loginScreen" class="card">
-        <div style="font-size: 60px; margin-bottom: 10px;">🎅</div>
-        <h1 id="appTitle">Жаңа Жыл 2026</h1>
-        <p id="appDesc">Есіміңізді жазып, саяхатты бастаңыз!</p>
-        
-        <input type="text" id="nameInput" placeholder="Атыңыз...">
-        <button onclick="startJourney()" class="main-btn" id="btnStart">Бастау 🚀</button>
+        <h1>✨ 2026 Жыл</h1>
+        <div id="loginCountdown" class="countdown-box">...</div>
+        <p id="appDesc">Адал ниетпен құттықтау жолдаңыз!</p>
+        <input type="text" id="nameInput" placeholder="Есіміңіз...">
+        <button onclick="startJourney()" class="main-btn" id="btnStart">Ашу 🤲</button>
     </div>
 
     <div id="journeyScreen" class="card hidden">
-        <div id="localTime">00:00</div>
         
-        <h2 id="cityName" class="city-name">City</h2>
-        
-        <p id="greetingMsg" class="greeting-text">...</p>
-        
-        <div id="poemBox" class="poem-box">...</div>
+        <div id="mainCountdown" class="countdown-box"></div>
 
-        <button onclick="nextCity()" class="main-btn" id="btnNext">✈️</button>
-        <button onclick="shareGreeting()" class="main-btn share-btn" id="btnShare">🔗</button>
+        <div id="chestWrapper" onclick="openChest()">
+            <div class="chest-container">🎁</div>
+            <div class="chest-hint">Сыйлықты ашу үшін басыңыз!</div>
+        </div>
+
+        <div id="contentWrapper" class="hidden">
+            <h2 id="cityName" class="city-name">Astana</h2>
+            <div id="greetingMsg" class="greeting-text">...</div>
+            <div id="poemBox" class="poem-box">...</div>
+            
+            <button onclick="nextCity()" class="main-btn" id="btnNext">Келесі ел ✈️</button>
+            <button onclick="shareGreeting()" class="main-btn" style="background:#fff; color:#000" id="btnShare">Бөлісу 🔗</button>
+        </div>
     </div>
 
     <script>
-        // --- БАРЛЫҚ ТІЛДЕГІ ИНТЕРФЕЙС МӘТІНДЕРІ ---
-        const uiText = {
-            kk: { title: "Жаңа Жыл 2026", desc: "Есіміңізді жазып, саяхатты бастаңыз!", ph: "Атыңыз...", start: "Бастау 🚀", next: "Келесі ел ✈️", share: "Бөлісу 🔗", copied: "Көшірілді!" },
-            ru: { title: "Новый Год 2026", desc: "Введите имя и начните путешествие!", ph: "Ваше имя...", start: "Поехали 🚀", next: "Следующая страна ✈️", share: "Поделиться 🔗", copied: "Скопировано!" },
-            en: { title: "New Year 2026", desc: "Enter your name to start!", ph: "Your name...", start: "Start Journey 🚀", next: "Next Country ✈️", share: "Share 🔗", copied: "Copied!" },
-            tr: { title: "Yeni Yıl 2026", desc: "Adınızı girin ve yolculuğa başlayın!", ph: "Adınız...", start: "Başla 🚀", next: "Sonraki Ülke ✈️", share: "Paylaş 🔗", copied: "Kopyalandı!" },
-            fr: { title: "Nouvel An 2026", desc: "Entrez votre nom pour commencer !", ph: "Votre nom...", start: "Commencer 🚀", next: "Pays Suivant ✈️", share: "Partager 🔗", copied: "Copié !" },
-            zh: { title: "2026 新年", desc: "输入您的名字开始旅程！", ph: "你的名字...", start: "开始 🚀", next: "下一个国家 ✈️", share: "分享 🔗", copied: "已复制！" },
-            ar: { title: "السنة الجديدة 2026", desc: "أدخل اسمك لتبدأ الرحلة!", ph: "اسمك...", start: "يبدأ 🚀", next: "البلد التالي ✈️", share: "مشاركة 🔗", copied: "نسخ!" }
-        };
+        // --- ДЕРЕКТЕР БАЗАСЫ (ШАРИҒАТҚА САЙ) ---
+        // 2026 Жыл - Жылқы жылы (Horse) 🐴
+        const targetDate = new Date("January 1, 2026 00:00:00").getTime();
 
-        // --- ҚҰТТЫҚТАУЛАР МЕН ӨЛЕҢДЕР ---
-        const contentData = {
+        const translations = {
             kk: {
-                greet: "Құрметті {name}, Жаңа жылыңызбен! Осы қаланың сұлулығындай өміріңіз жарқын болсын!",
-                // СІЗ ЖІБЕРГЕН ЖАҢА НҰСҚА:
-                poem: "Келді міне Жаңа жыл да жарқырап,\nАқ қар жатыр даламызда жалтырап.\nБаршамызға бақ-береке, құт дарып,\nМол ризық келсін бізге сарқырап!" 
+                ui: { title: "Берекелі 2026 Жыл", desc: "Атыңызды енгізіңіз:", ph: "Атыңыз...", start: "Бастау 🤲", next: "Келесі ел ✈️", share: "Бөлісу 🔗", hint: "Сандықты басыңыз! 🎁", days: "күн", hours: "сағ", mins: "мин", secs: "сек" },
+                // Келе жатқан жыл (Before)
+                coming: {
+                    greet: "Құрметті {name}, келе жатқан Жаңа жылда Алла Тағала екі дүниенің жақсылығын нәсіп етсін! Еліміз тыныш, жұртымыз аман болсын.",
+                    poem: "Алла қолдап әр ісіңді оң қылсын,\nРизық-несібең адалынан мол болсын.\nКеле жатқан жылда мынау жаңарып,\nИманыңыз нұрға толы зор болсын!"
+                },
+                // Келіп жеткен жыл (After)
+                arrived: {
+                    greet: "Құрметті {name}, келіп жеткен Жаңа жылда Алла Тағала әрбір күніңізге береке берсін! Отбасыңызға амандық тілеймін.",
+                    poem: "Жаңа жылда жақсылықтар көп болсын,\nУайым-қайғы ешқашанда жоқ болсын.\nАлла берген ғұмырыңыз мәнді боп,\nДастарханың адал асқа тоқ болсын!"
+                }
             },
             ru: {
-                greet: "Дорогой(ая) {name}, С Новым Годом! Пусть этот год принесет столько счастья, сколько огней в этом городе!",
-                poem: "Пусть Новый год добро несет,\nИ счастье в доме расцветет.\nПусть сбудутся мечты сполна,\nИ будет жизнь любви полна!"
+                ui: { title: "Благословенный 2026", desc: "Введите имя:", ph: "Ваше имя...", start: "Открыть 🤲", next: "След. страна ✈️", share: "Поделиться 🔗", hint: "Нажмите на сундук! 🎁", days: "дн", hours: "ч", mins: "мин", secs: "сек" },
+                coming: {
+                    greet: "Уважаемый(ая) {name}, в наступающем году пусть Всевышний дарует вам благополучие и укрепит вашу веру!",
+                    poem: "Пусть Аллах хранит от бед,\nДарит мудрость и совет.\nВ наступающем году,\nОтводит горе и беду."
+                },
+                arrived: {
+                    greet: "Уважаемый(ая) {name}, в наступившем году пусть Всевышний наполнит ваш дом баракатом (благодатью)!",
+                    poem: "Год пришел, хвала Творцу,\nСчастье пусть придет к лицу.\nМир, покой и благодать,\nБудут дом ваш наполнять."
+                }
             },
             en: {
-                greet: "Dear {name}, Happy New Year! Wishing you a year as bright and wonderful as this city!",
-                poem: "May this New Year bring you light,\nMake your future warm and bright.\nJoy and peace in every day,\nSuccess and love will come your way!"
-            },
-            fr: {
-                greet: "Cher {name}, Bonne Année! Que cette année vous apporte joie, bonheur et prospérité!",
-                poem: "Que cette année soit pleine de joie,\nQue le bonheur soit avec toi.\nSanté, succès et jours heureux,\nVoilà mes plus sincères vœux !"
+                ui: { title: "Blessed 2026", desc: "Enter name:", ph: "Name...", start: "Start 🤲", next: "Next ✈️", share: "Share 🔗", hint: "Tap the chest! 🎁", days: "d", hours: "h", mins: "m", secs: "s" },
+                coming: {
+                    greet: "Dear {name}, in this coming year, may the Almighty grant you halal sustenance and success in all good deeds!",
+                    poem: "May Allah guide you day by day,\nKeep all troubles far away.\nIn the coming year so new,\nMay His blessings be with you."
+                },
+                arrived: {
+                    greet: "Dear {name}, in this new year, may the Almighty fill your life with peace, faith, and prosperity!",
+                    poem: "New year is here, bright and clear,\nMay faith in heart be ever near.\nGoodness, health, and halal wealth,\nJoy and peace and spiritual health."
+                }
             },
             tr: {
-                greet: "Sevgili {name}, Yeni Yılınız Kutlu Olsun! Tüm dileklerinizin gerçekleşmesi dileğiyle!",
-                poem: "Yeni yıl sana huzur getirsin,\nTüm dertlerin artık bitsin.\nYüzün her an neşeyle gülsün,\nHayallerin gerçeğe dönsün!"
+                ui: { title: "Bereketli 2026", desc: "Adınız:", ph: "Adınız...", start: "Başla 🤲", next: "Sonraki ✈️", share: "Paylaş 🔗", hint: "Sandığa tıkla! 🎁", days: "gün", hours: "sa", mins: "dk", secs: "sn" },
+                coming: {
+                    greet: "Sevgili {name}, yaklaşan yeni yılda Allah size hayırlı rızıklar ve iman dolu bir ömür nasip etsin!",
+                    poem: "Rabbim yolunu açık etsin,\nHer türlü dertten seni korusun.\nYeni yılda tüm duaların,\nHayırlısıyla kabul olsun."
+                },
+                arrived: {
+                    greet: "Sevgili {name}, yeni yılda Allah hanenize bereket, kalbinize huzur versin!",
+                    poem: "Yeni yıl geldi hoş geldi,\nGönlüne iman dolsun ebedi.\nRabbimden dilerim saadet,\nHayatın olsun hep selamet."
+                }
             },
             ar: {
-                greet: "عزيزي {name}، عام سعيد! أتمنى لك حياة مليئة بالسعادة والنجاح!",
-                poem: "عام جديد يهل بالنور،\nيملأ قلبك بالسرور.\nتحقق فيه كل الأماني،\nوتعيش في خير وتهاني."
-            },
-            zh: {
-                greet: "亲爱的 {name}, 新年快乐! 愿你新的一年万事如意，心想事成!",
-                poem: "新年来临喜气浓，\n万事如意乐融融。\n愿你梦想皆成真，\n幸福安康伴一生。"
+                ui: { title: "عام مبارك 2026", desc: "أدخل اسمك:", ph: "الاسم...", start: "ابدأ 🤲", next: "التالي ✈️", share: "مشاركة 🔗", hint: "اضغط الصندوق! 🎁", days: "يوم", hours: "ساعة", mins: "د", secs: "ث" },
+                coming: {
+                    greet: "عزيزي {name}، في العام القادم، أسأل الله أن يرزقك الرزق الحلال ويبارك في عمرك!",
+                    poem: "يا رب بارك في العام الجديد،\nواجعل حياة {name} في عيد.\nبالإيمان والتقوى تزيد،\nورضا الرحمن هو المزيد."
+                },
+                arrived: {
+                    greet: "عزيزي {name}، في هذا العام الجديد، أسأل الله أن يملأ حياتك بالنور والبركة!",
+                    poem: "عام جديد أقبل علينا،\nنسأل الله اللطف فينا.\nارزقنا يا رب الجنان،\nواحفظنا من كل شيطان."
+                }
             }
         };
 
         const destinations = [
-            { name: "Astana 🇰🇿", tz: "Asia/Almaty", lang: "kk" },
-            { name: "Paris 🇫🇷", tz: "Europe/Paris", lang: "fr" },
-            { name: "New York 🇺🇸", tz: "America/New_York", lang: "en" },
-            { name: "Istanbul 🇹🇷", tz: "Europe/Istanbul", lang: "tr" },
-            { name: "Dubai 🇦🇪", tz: "Asia/Dubai", lang: "ar" },
-            { name: "Beijing 🇨🇳", tz: "Asia/Shanghai", lang: "zh" },
-            { name: "Moscow 🇷🇺", tz: "Europe/Moscow", lang: "ru" },
-            { name: "London 🇬🇧", tz: "Europe/London", lang: "en" }
+            { name: "Astana 🇰🇿", tz: "Asia/Almaty", lang: "kk", coords: [51.16, 71.47] },
+            { name: "Mecca 🇸🇦", tz: "Asia/Riyadh", lang: "ar", coords: [21.3891, 39.8579] }, // Мекке қосылды
+            { name: "Istanbul 🇹🇷", tz: "Europe/Istanbul", lang: "tr", coords: [41.0082, 28.9784] },
+            { name: "Kuala Lumpur 🇲🇾", tz: "Asia/Kuala_Lumpur", lang: "en", coords: [3.1390, 101.6869] },
+            { name: "Tashkent 🇺🇿", tz: "Asia/Tashkent", lang: "ru", coords: [41.2995, 69.2401] },
+            { name: "London 🇬🇧", tz: "Europe/London", lang: "en", coords: [51.5074, -0.1278] }
         ];
 
         // --- ЛОГИКА ---
+        let map, planeMarker;
         let currentDestIndex = 0;
-        let userName = "Dosym";
-        const audio = document.getElementById('bgMusic');
+        let userName = "";
         let isMusicPlaying = false;
+        const audio = document.getElementById('bgMusic');
 
         window.onload = () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            if(urlParams.get('name')) {
-                document.getElementById('nameInput').value = urlParams.get('name');
-            }
-            createSnow();
-            changeUILanguage();
-            audio.volume = 0.5;
+            initMap();
+            setInterval(updateCountdown, 1000);
+            updateCountdown(); // бірден көрсету
+            changeLanguage();
         };
 
-        function changeUILanguage() {
-            const lang = document.getElementById('uiLangSelect').value;
-            const t = uiText[lang];
+        function initMap() {
+            map = L.map('map', { zoomControl: false }).setView([51.16, 71.47], 4);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '', subdomains: 'abcd', maxZoom: 19
+            }).addTo(map);
             
-            document.getElementById('appTitle').textContent = t.title;
-            document.getElementById('appDesc').textContent = t.desc;
-            document.getElementById('nameInput').placeholder = t.ph;
+            const planeIcon = L.divIcon({
+                html: '<div style="font-size: 30px; transform: rotate(-45deg);">✈️</div>',
+                className: 'plane-marker', iconSize: [30, 30]
+            });
+            planeMarker = L.marker([51.16, 71.47], {icon: planeIcon}).addTo(map);
+        }
+
+        // ТАЙМЕР
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            const lang = document.getElementById('uiLangSelect').value;
+            const t = translations[lang].ui;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            let timeString = "";
+            if (distance < 0) {
+                // Жыл келді
+                timeString = ""; 
+                document.getElementById('loginCountdown').style.display = 'none';
+                document.getElementById('mainCountdown').style.display = 'none';
+            } else {
+                // Жыл келмеді
+                timeString = `⏳ ${days}${t.days} ${hours}${t.hours} ${minutes}${t.mins} ${seconds}${t.secs}`;
+                document.getElementById('loginCountdown').textContent = timeString;
+                document.getElementById('mainCountdown').textContent = timeString;
+            }
+        }
+
+        function changeLanguage() {
+            const lang = document.getElementById('uiLangSelect').value;
+            const t = translations[lang].ui;
             document.getElementById('btnStart').textContent = t.start;
+            document.getElementById('nameInput').placeholder = t.ph;
+            document.querySelector('.chest-hint').textContent = t.hint;
+            // Егер ішінде болсақ, мәтінді де жаңарту
+            if(!document.getElementById('journeyScreen').classList.contains('hidden')){
+               updateCardContent(); 
+            }
         }
 
         function toggleMusic() {
-            const btn = document.getElementById('musicBtn');
             if (isMusicPlaying) {
-                audio.pause();
-                isMusicPlaying = false;
-                btn.innerHTML = "🔇";
-                btn.classList.remove('playing');
+                audio.pause(); isMusicPlaying = false; document.getElementById('musicBtn').textContent = "🔇";
             } else {
-                audio.play().then(() => {
-                    isMusicPlaying = true;
-                    btn.innerHTML = "🎵";
-                    btn.classList.add('playing');
-                }).catch(err => console.log(err));
+                audio.play(); isMusicPlaying = true; document.getElementById('musicBtn').textContent = "🎵";
             }
         }
 
         function startJourney() {
-            const input = document.getElementById('nameInput');
-            userName = input.value.trim() || "Friend";
-            
+            userName = document.getElementById('nameInput').value.trim() || "Досым";
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('journeyScreen').classList.remove('hidden');
-            
-            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
             if(!isMusicPlaying) toggleMusic();
             
-            updateContent();
-            setInterval(updateTime, 1000);
+            // Тілді сәйкестендіру
+            const lang = document.getElementById('uiLangSelect').value;
+            const cityIndex = destinations.findIndex(d => d.lang === lang);
+            if(cityIndex !== -1) currentDestIndex = cityIndex;
+            
+            // Картаны дайындау, бірақ әлі сандық ашылмады
+            const city = destinations[currentDestIndex];
+            map.flyTo(city.coords, 5, { duration: 2 });
+            planeMarker.setLatLng(city.coords);
         }
 
-        function updateContent() {
+        // САНДЫҚТЫ АШУ (ЭМОДЗИ АТЫЛУ + МӘТІН ШЫҒУ)
+        function openChest() {
+            // Эмодзи ату: Жылқы (2026), Гүл, Аю
+            const duration = 2000;
+            const end = Date.now() + duration;
+
+            // Салют логикасы
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    shapes: ['circle'], 
+                    scalar: 2, // Үлкенірек
+                    colors: ['#FFD700', '#FF0000']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#00FF00', '#0000FF']
+                });
+
+                // Арнайы эмодзилер (Жылқы, Гүл)
+                confetti({
+                    particleCount: 2,
+                    angle: 90,
+                    spread: 100,
+                    origin: { y: 0.7 },
+                    shapes: ['circle'], 
+                    scalar: 3,
+                    shapeOptions: {
+                        render: (ctx) => {
+                            ctx.font = '30px Arial';
+                            ctx.fillText(['🐴','🐎','🌸','🧸','✨'][Math.floor(Math.random()*5)], 0, 0);
+                        }
+                    }
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+
+            // Сандықты жасыру, мәтінді көрсету
+            document.getElementById('chestWrapper').style.display = 'none';
+            document.getElementById('contentWrapper').classList.remove('hidden');
+            
+            updateCardContent();
+        }
+
+        function updateCardContent() {
             const city = destinations[currentDestIndex];
-            const langCode = contentData[city.lang] ? city.lang : 'en';
-            const data = contentData[langCode];
-            const localUI = uiText[langCode] || uiText['en']; // Түймелер үшін сол елдің тілін алу
+            const now = new Date().getTime();
+            const isNewYearArrived = now >= targetDate;
+
+            // Тілді анықтау
+            // 1. Егер сол қаланың тілі базада болса, соны аламыз
+            // 2. Болмаса, ағылшынша
+            let langCode = translations[city.lang] ? city.lang : 'en';
+            
+            // Dropdown-ды синхрондау
+            document.getElementById('uiLangSelect').value = langCode;
+
+            // Деректерді алу
+            const t = translations[langCode];
+            const data = isNewYearArrived ? t.arrived : t.coming; // Уақытқа қарай таңдау
 
             document.getElementById('cityName').textContent = city.name;
-            document.getElementById('greetingMsg').innerHTML = data.greet.replace("{name}", `<b style="color:#ffd700">${userName}</b>`);
+            document.getElementById('greetingMsg').innerHTML = data.greet.replace("{name}", `<b style="color:#FFD700">${userName}</b>`);
             document.getElementById('poemBox').textContent = data.poem;
 
-            // ТҮЙМЕЛЕР ТІЛІН СОЛ ЕЛДІҢ ТІЛІНЕ АУЫСТЫРУ
-            document.getElementById('btnNext').innerHTML = localUI.next;
-            document.getElementById('btnShare').innerHTML = localUI.share;
-
-            updateTime();
+            document.getElementById('btnNext').textContent = t.ui.next;
+            document.getElementById('btnShare').textContent = t.ui.share;
         }
 
         function nextCity() {
-            const card = document.getElementById('journeyScreen');
-            card.style.transform = 'scale(0.9) translateX(-20px)';
-            card.style.opacity = '0';
-            setTimeout(() => {
-                currentDestIndex = (currentDestIndex + 1) % destinations.length;
-                updateContent();
-                card.style.transform = 'scale(1) translateX(0)';
-                card.style.opacity = '1';
-                confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
-            }, 300);
-        }
-
-        function updateTime() {
+            currentDestIndex = (currentDestIndex + 1) % destinations.length;
             const city = destinations[currentDestIndex];
-            try {
-                const now = new Date();
-                const timeStr = new Intl.DateTimeFormat('en-GB', { timeZone: city.tz, hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(now);
-                document.getElementById('localTime').textContent = timeStr;
-            } catch(e) { }
+            
+            // Ұшу
+            map.flyTo(city.coords, 5, { duration: 2.5 });
+            planeMarker.setLatLng(city.coords);
+
+            updateCardContent();
         }
 
         function shareGreeting() {
-            const url = window.location.protocol + "//" + window.location.host + window.location.pathname + "?name=" + encodeURIComponent(userName);
-            
-            const city = destinations[currentDestIndex];
-            const langCode = contentData[city.lang] ? city.lang : 'en';
-            const localUI = uiText[langCode] || uiText['en'];
-
+            const url = window.location.href.split('?')[0] + "?name=" + encodeURIComponent(userName);
             if (navigator.share) {
                 navigator.share({ title: 'New Year Wish', url: url });
             } else {
-                navigator.clipboard.writeText(url).then(() => {
-                    const btn = document.getElementById('btnShare');
-                    const original = btn.innerHTML;
-                    btn.textContent = localUI.copied;
-                    setTimeout(() => btn.innerHTML = original, 2000);
-                });
+                navigator.clipboard.writeText(url);
+                alert("Сілтеме көшірілді / Link copied");
             }
-        }
-
-        function createSnow() {
-            const symbols = ['❄', '❅', '❆', '•'];
-            setInterval(() => {
-                const snow = document.createElement('div');
-                snow.className = 'snowflake';
-                snow.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
-                snow.style.left = Math.random() * 100 + 'vw';
-                snow.style.fontSize = Math.random() * 20 + 10 + 'px';
-                snow.style.animationDuration = Math.random() * 5 + 5 + 's';
-                document.body.appendChild(snow);
-                setTimeout(() => snow.remove(), 10000);
-            }, 200);
         }
     </script>
 </body>
