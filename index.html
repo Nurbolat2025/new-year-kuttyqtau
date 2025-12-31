@@ -1,20 +1,9 @@
-Бұл керемет идея! Жобаны жаңа деңгейге көтеретін өзгерістер.
-Сіздің сұранысыңыз бойынша екі маңызды жаңарту жасадым:
- * 📱 Смартфонға бейімдеу (Адаптация):
-   * Телефонмен ашқанда карта мен мәтін сыймай қалатын мәселе шешілді.
-   * Енді карта экранның жоғарғы 35%, ал мәтін бөлігі төменгі 65% алады.
-   * Шрифттер мен батырмалар телефон экранына ыңғайлы етіп кішірейтілді.
- * 🗣️ Дыбыстық оқу (Text-to-Speech):
-   * Музыканың орнына енді "Дауыс" (Speaker) функциясы қосылды.
-   * Сіз қай тілді таңдасаңыз (немесе қай елге ұшсаңыз), телефон сол тілдегі өлеңді дауыстап оқып береді (Бұл телефонның өз жүйесіндегі дауыстарды қолданады).
-   * Ескерту: Қазақ тіліндегі дауыс кейбір телефондарда (егер қазақ тілі жүйелік деңгейде орнатылмаған болса) оқылмауы мүмкін, бірақ ағылшын, орыс, түрік т.б. тілдер анық оқылады.
-Міне, толық жаңартылған код. index.html-ге түгел көшіріп алыңыз:
 <!DOCTYPE html>
 <html lang="kk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Global 2026 Greeting</title>
+    <title>Берекелі 2026</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0d47a1">
@@ -22,51 +11,63 @@
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
     <style>
-        body { margin: 0; padding: 0; height: 100vh; display: flex; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; background: #1a1a1a; color: white; }
+        /* НЕГІЗГІ ПАРАМЕТРЛЕР */
+        body { margin: 0; padding: 0; height: 100vh; height: 100dvh; display: flex; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; background: #1a1a1a; color: white; }
 
-        /* --- СОЛ ЖАҚ (КАРТА) --- */
+        /* --- 1. КАРТА (СОЛ ЖАҚ / ҮСТІ) --- */
         #map-container { width: 60%; height: 100%; position: relative; }
         #map { width: 100%; height: 100%; z-index: 1; }
         
-        /* --- ОҢ ЖАҚ (ПАНЕЛЬ) --- */
+        /* --- 2. ПАНЕЛЬ (ОҢ ЖАҚ / АСТЫ) --- */
         #sidebar {
             width: 40%; height: 100%;
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 10px; box-shadow: -5px 0 15px rgba(0,0,0,0.5); z-index: 2; overflow-y: auto;
+            display: flex; flex-direction: column; 
+            justify-content: space-between; /* Маңызды: Арақашықтықты бөлу */
+            align-items: center;
+            padding: 10px; box-sizing: border-box;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5); z-index: 2;
         }
 
-        /* --- ЖОҒАРҒЫ МӘЗІР --- */
-        .top-controls { position: absolute; top: 15px; right: 15px; z-index: 1000; display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; width: 85%; pointer-events: none; }
-        .top-controls > * { pointer-events: auto; }
-        
-        .icon-btn { background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s;}
+        /* --- ЖОҒАРҒЫ БАСҚАРУ --- */
+        .top-controls { position: absolute; top: 15px; right: 15px; z-index: 1000; display: flex; gap: 8px; }
+        .icon-btn { background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; width: 38px; height: 38px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .icon-btn.speaking { background: #4CAF50; animation: pulse 1.5s infinite; }
-        .lang-select { background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 5px 10px; font-weight: bold; border: none; cursor: pointer; outline: none; box-shadow: 0 2px 10px rgba(0,0,0,0.3); font-size: 14px; }
+        .lang-select { background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 5px 10px; font-weight: bold; border: none; cursor: pointer; outline: none; font-size: 13px; }
 
-        h1 { color: #FFD700; text-shadow: 0 0 10px #FF8C00; font-size: 1.5rem; margin-bottom: 15px; text-align: center; line-height: 1.2;}
+        /* --- ОРТАҢҒЫ МАЗМҰН --- */
+        /* Бұл блок қажет болса ғана скролл жасайды */
+        .scrollable-content {
+            flex-grow: 1; /* Бос орынның бәрін алады */
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; overflow-y: auto; min-height: 0;
+        }
+
+        h1 { color: #FFD700; text-shadow: 0 0 10px #FF8C00; font-size: 1.4rem; margin: 5px 0; text-align: center; }
         
-        .countdown-box { font-family: 'Courier New', monospace; background: rgba(0, 255, 255, 0.1); color: #84ffff; padding: 8px; border-radius: 10px; margin: 8px 0; font-size: 1rem; border: 1px solid rgba(132, 255, 255, 0.3); text-shadow: 0 0 5px #84ffff; width: 95%; text-align: center; }
-        
-        .chest-wrapper { margin: 15px 0; cursor: pointer; animation: float 3s ease-in-out infinite; text-align: center;}
-        .chest-icon { font-size: 70px; filter: drop-shadow(0 0 20px gold); }
-        .chest-hint { font-size: 0.8rem; color: #aaa; margin-top: 5px; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        /* Таймер */
+        .countdown-box { font-family: 'Courier New', monospace; background: rgba(0, 255, 255, 0.1); color: #84ffff; padding: 8px; border-radius: 8px; margin: 5px 0; font-size: 0.95rem; border: 1px solid rgba(132, 255, 255, 0.3); width: 95%; text-align: center; }
+
+        /* Сандық */
+        .chest-wrapper { margin: 10px 0; cursor: pointer; animation: float 3s ease-in-out infinite; text-align: center;}
+        .chest-icon { font-size: 60px; filter: drop-shadow(0 0 15px gold); }
+        .chest-hint { font-size: 0.8rem; color: #aaa; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); } 100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); } }
 
-        .card-content { background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 15px; width: 95%; text-align: center; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); box-sizing: border-box;}
-        .city-name { font-size: 1.5rem; color: #4DD0E1; margin: 5px 0; text-shadow: 2px 2px 4px black; }
-        .greeting-text { font-size: 1rem; line-height: 1.4; color: #fff; margin: 10px 0; }
-        
-        .poem-box { background: rgba(0, 40, 0, 0.6); padding: 10px; border-radius: 10px; margin: 10px 0; border-left: 3px solid #FFD700; font-style: italic; white-space: pre-line; color: #fffde7; font-size: 0.95rem; line-height: 1.5; text-shadow: 1px 1px 2px black; border: 1px solid rgba(255, 215, 0, 0.2); }
+        /* Құттықтау картасы */
+        .card-content { background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 15px; width: 95%; text-align: center; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.1); }
+        .city-name { font-size: 1.4rem; color: #4DD0E1; margin: 5px 0; text-shadow: 2px 2px 4px black; }
+        .greeting-text { font-size: 0.95rem; line-height: 1.3; color: #fff; margin: 8px 0; }
+        .poem-box { background: rgba(0, 40, 0, 0.6); padding: 8px; border-radius: 10px; margin: 8px 0; border-left: 3px solid #FFD700; font-style: italic; white-space: pre-line; color: #fffde7; font-size: 0.9rem; line-height: 1.4; text-shadow: 1px 1px 2px black; }
 
-        input { width: 85%; padding: 12px; margin: 10px 0; border-radius: 12px; border: none; text-align: center; font-size: 16px; }
-        .main-btn { width: 100%; padding: 12px; margin: 5px 0; border-radius: 12px; border: none; font-size: 15px; font-weight: bold; background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%); color: #000; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s; }
+        /* Батырмалар */
+        input { width: 80%; padding: 10px; margin: 5px 0; border-radius: 10px; border: none; text-align: center; font-size: 16px; }
+        .main-btn { width: 100%; padding: 10px; margin: 4px 0; border-radius: 10px; border: none; font-size: 14px; font-weight: bold; background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%); color: #000; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.3); }
         .main-btn:active { transform: scale(0.95); }
         .share-btn { background: linear-gradient(135deg, #eee 0%, #ccc 100%); color: #333; }
         .download-btn { background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); color: white; }
@@ -74,20 +75,25 @@
         .deny-btn { background: #F44336; color: white; width: 45%; margin: 5px;}
 
         .hidden { display: none !important; }
-        .plane-icon { font-size: 40px; text-shadow: 0 0 10px black; transition: all 1s ease-in-out; }
+        .plane-icon { font-size: 35px; text-shadow: 0 0 10px black; transition: all 1s ease-in-out; }
 
-        /* --- СМАРТФОНҒА АРНАЛҒАН СТИЛЬДЕР --- */
+        /* Статистика (Төменге бекітілген) */
+        #stats-container { margin-top: 5px; opacity: 0.8; text-align: center; height: 30px; }
+        #stats-container img { height: 100%; border-radius: 4px; }
+
+        /* --- МОБИЛЬДІК АДАПТАЦИЯ (ТҮЗЕТІЛГЕН) --- */
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            #map-container { width: 100%; height: 35vh; } /* Карта биіктігі 35% */
-            #sidebar { width: 100%; height: 65vh; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); padding: 15px 5px; } /* Мәтін биіктігі 65% */
-            h1 { font-size: 1.3rem; margin: 5px 0; }
-            .city-name { font-size: 1.3rem; }
-            .greeting-text { font-size: 0.9rem; }
-            .poem-box { font-size: 0.9rem; padding: 8px; }
-            .main-btn { padding: 10px; font-size: 14px; }
-            .chest-icon { font-size: 60px; }
-            #stats-container { transform: scale(0.8) translateX(-60%); bottom: 5px; }
+            #map-container { width: 100%; height: 35vh; } /* Карта: 35% */
+            #sidebar { width: 100%; height: 65vh; padding: 10px 5px; } /* Мәтін: 65% */
+            
+            /* Элементтерді сәл кішірейту */
+            h1 { font-size: 1.2rem; margin: 0 0 5px 0; }
+            .city-name { font-size: 1.2rem; margin: 2px 0; }
+            .countdown-box { font-size: 0.85rem; padding: 5px; }
+            .chest-icon { font-size: 50px; }
+            .main-btn { padding: 8px; font-size: 13px; }
+            .poem-box { font-size: 0.85rem; padding: 6px; }
         }
     </style>
 </head>
@@ -96,155 +102,111 @@
     <div id="map-container">
         <div id="map"></div>
         <div class="top-controls">
-            <button id="voiceBtn" class="icon-btn" onclick="toggleVoice()" title="Дауыс">🔇</button>
+            <button id="voiceBtn" class="icon-btn" onclick="toggleVoice()" title="Оқу">🔇</button>
             <select id="uiLangSelect" class="lang-select" onchange="changeLanguage()">
-                <option value="kk">🇰🇿 Қазақ</option>
-                <option value="ru">🇷🇺 Русский</option>
-                <option value="en">🇺🇸 English</option>
-                <option value="fr">🇫🇷 Français</option>
-                <option value="de">🇩🇪 Deutsch</option>
-                <option value="ar">🇸🇦 العربية</option>
-                <option value="zh">🇨🇳 中文</option>
-                <option value="ko">🇰🇷 한국어</option>
-                <option value="ja">🇯🇵 日本語</option>
-                <option value="es">🇪🇸 Español</option>
-                <option value="mn">🇲🇳 Монгол</option>
+                <option value="kk">🇰🇿 ҚАЗ</option>
+                <option value="ru">🇷🇺 РУС</option>
+                <option value="en">🇺🇸 ENG</option>
+                <option value="ar">🇸🇦 ARA</option>
+                <option value="tr">🇹🇷 TUR</option>
+                <option value="zh">🇨🇳 CHN</option>
+                <option value="fr">🇫🇷 FRA</option>
+                <option value="de">🇩🇪 DEU</option>
+                <option value="ko">🇰🇷 KOR</option>
+                <option value="ja">🇯🇵 JPN</option>
+                <option value="es">🇪🇸 ESP</option>
+                <option value="mn">🇲🇳 MON</option>
             </select>
         </div>
     </div>
 
     <div id="sidebar">
-        <div id="loginScreen" style="width: 100%; text-align: center;">
-            <h1>🌙 Берекелі 2026</h1>
-            <div id="loginCountdown" class="countdown-box">Жүктелуде...</div>
-            <p id="appDesc" style="font-size: 0.9rem; color: #ccc;">Адал ниетпен құттықтау жолдаңыз!</p>
+        
+        <div class="scrollable-content">
             
-            <div id="confirmNameBlock" class="hidden" style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; margin-top: 10px;">
-                <p id="confirmQuestion" style="font-size: 1rem; margin-bottom: 10px;">Сіздің атыңыз <b id="detectedName" style="color: #FFD700;"></b> ба?</p>
-                <div style="display: flex; justify-content: center;">
-                    <button onclick="confirmNameYes()" class="main-btn confirm-btn" id="btnYes">Иә ✅</button>
-                    <button onclick="confirmNameNo()" class="main-btn deny-btn" id="btnNo">Жоқ ❌</button>
-                </div>
-            </div>
-
-            <div id="inputNameBlock">
-                <input type="text" id="nameInput" placeholder="Есіміңіз...">
-                <div id="errorMsg" style="color: #FF5252; display: none; font-size: 0.8em; margin-top: 5px;"></div>
-                <button onclick="startJourney()" class="main-btn" id="btnStart">Бастау 🤲</button>
-            </div>
-        </div>
-
-        <div id="journeyScreen" class="hidden" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-            <div id="captureArea" class="card-content">
-                <div id="mainCountdown" class="countdown-box" style="margin: 0 auto 10px auto;"></div>
+            <div id="loginScreen" style="width: 100%; text-align: center;">
+                <h1>🌙 Берекелі 2026</h1>
+                <div id="loginCountdown" class="countdown-box">Жүктелуде...</div>
+                <p id="appDesc" style="font-size: 0.8rem; color: #ccc; margin: 5px 0;">Адал ниетпен құттықтау жолдаңыз!</p>
                 
-                <div id="chestWrapper" class="chest-wrapper" onclick="openChest()">
-                    <div class="chest-icon">🎁</div>
-                    <div class="chest-hint" id="chestHint">Сыйлықты ашу үшін басыңыз!</div>
+                <div id="confirmNameBlock" class="hidden" style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; margin-top: 5px;">
+                    <p id="confirmQuestion" style="font-size: 0.9rem; margin-bottom: 5px;">Сіздің атыңыз <b id="detectedName" style="color: #FFD700;"></b> ба?</p>
+                    <div style="display: flex; justify-content: center;">
+                        <button onclick="confirmNameYes()" class="main-btn confirm-btn" id="btnYes">Иә ✅</button>
+                        <button onclick="confirmNameNo()" class="main-btn deny-btn" id="btnNo">Жоқ ❌</button>
+                    </div>
                 </div>
 
-                <div id="contentWrapper" class="hidden">
-                    <h2 id="cityName" class="city-name">City</h2>
-                    <div id="greetingMsg" class="greeting-text">...</div>
-                    <div id="poemBox" class="poem-box">...</div>
+                <div id="inputNameBlock">
+                    <input type="text" id="nameInput" placeholder="Есіміңіз...">
+                    <div id="errorMsg" style="color: #FF5252; display: none; font-size: 0.8em; margin-top: 2px;"></div>
+                    <button onclick="startJourney()" class="main-btn" id="btnStart">Бастау 🤲</button>
                 </div>
             </div>
-            
-            <div id="controlButtons" class="hidden" style="width: 100%;">
-                <button onclick="downloadCard()" class="main-btn download-btn" id="btnDownload">📸 Сурет ретінде жүктеу</button>
-                <button onclick="nextCity()" class="main-btn" id="btnNext">Келесі ел ✈️</button>
-                <button onclick="shareGreeting()" class="main-btn share-btn" id="btnShare">Бөлісу 🔗</button>
+
+            <div id="journeyScreen" class="hidden" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                
+                <div id="captureArea" class="card-content">
+                    <div id="mainCountdown" class="countdown-box"></div>
+                    
+                    <div id="chestWrapper" class="chest-wrapper" onclick="openChest()">
+                        <div class="chest-icon">🎁</div>
+                        <div class="chest-hint" id="chestHint">Сыйлықты ашу үшін басыңыз!</div>
+                    </div>
+
+                    <div id="contentWrapper" class="hidden">
+                        <h2 id="cityName" class="city-name">City</h2>
+                        <div id="greetingMsg" class="greeting-text">...</div>
+                        <div id="poemBox" class="poem-box">...</div>
+                    </div>
+                </div>
+                
+                <div id="controlButtons" class="hidden" style="width: 100%;">
+                    <button onclick="downloadCard()" class="main-btn download-btn" id="btnDownload">📸 Открытка жүктеу</button>
+                    <button onclick="nextCity()" class="main-btn" id="btnNext">Келесі ел ✈️</button>
+                    <button onclick="shareGreeting()" class="main-btn share-btn" id="btnShare">Бөлісу 🔗</button>
+                </div>
             </div>
         </div>
 
-        <div id="stats-container" style="margin-top: 15px; opacity: 0.7;">
+        <div id="stats-container">
             <a href="https://info.flagcounter.com/YourNewID" target="_blank">
-                <img src="https://s11.flagcounter.com/count2/p2x2/bg_000000/txt_FFFFFF/border_CCCCCC/columns_4/maxflags_12/viewers_0/labels_0/pageviews_0/flags_0/percent_0/" alt="Flag Counter" border="0" style="height: 40px;">
+                <img src="https://s11.flagcounter.com/count2/p2x2/bg_000000/txt_FFFFFF/border_CCCCCC/columns_4/maxflags_12/viewers_0/labels_0/pageviews_0/flags_0/percent_0/" alt="Flag Counter" border="0">
             </a>
         </div>
     </div>
 
+    <audio id="bgMusic" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_1f23348651.mp3" type="audio/mp3">
+    </audio>
+
     <script>
         const targetDate = new Date("January 1, 2026 00:00:00").getTime();
 
-        // 11 ТІЛ, ШАРИҒАТҚА САЙ ӨЛЕҢДЕР + TTS Codes (BCP 47 tags)
         const translations = {
-            kk: {
-                tts: 'kk-KZ', // Text-to-Speech Code
-                ui: { title: "Берекелі 2026 Жыл", desc: "Атыңызды енгізіңіз:", ph: "Атыңыз...", start: "Бастау 🤲", next: "Келесі ел ✈️", share: "Бөлісу 🔗", download: "📸 Открытка жүктеу", hint: "Сыйлықты ашу! 🎁", days: "күн", hours: "сағ", mins: "мин", secs: "сек", err_char: "Атта қате бар.", err_rep: "Әріп қайталанды.", conf_q: "Сіз {name}сіз бе?", yes: "Иә", no: "Жоқ" },
-                coming: { greet: "Құрметті {name}, келе жатқан Жаңа жылда Алла Тағала екі дүниенің жақсылығын нәсіп етсін!", poem: "Алла қолдап әр ісіңді оң қылсын,\nРизық-несібең адалынан мол болсын.\nКеле жатқан жылда бәрі жаңарып,\nИманыңыз нұрға толар жыл болсын!" },
-                arrived: { greet: "Құрметті {name}, Жаңа жылда Алла әрбір күніңізге береке берсін!", poem: "Жаңа жылда жақсылықтар көп болсын,\nУайым-қайғы ешқашанда жоқ болсын.\nАлла берген ғұмырыңыз мәнді боп,\nДастарханың адал асқа лық толсын!" }
-            },
-            ru: {
-                tts: 'ru-RU',
-                ui: { title: "Благословенный 2026", desc: "Введите имя:", ph: "Ваше имя...", start: "Открыть 🤲", next: "Далее ✈️", share: "Поделиться", download: "📸 Скачать", hint: "Откройте сундук!", days: "д", hours: "ч", mins: "м", secs: "с", err_char: "Ошибка в имени.", err_rep: "Повтор букв.", conf_q: "Вас зовут {name}?", yes: "Да", no: "Нет" },
-                coming: { greet: "Уважаемый {name}, пусть Всевышний дарует благополучие в новом году!", poem: "Пусть Аллах хранит от бед,\nДарит мудрость и совет.\nВ наступающем году,\nОтводит горе и беду." },
-                arrived: { greet: "Уважаемый {name}, пусть Всевышний наполнит дом баракатом!", poem: "Год пришел, хвала Творцу,\nСчастье пусть придет к лицу.\nМир, покой и благодать,\nБудут дом ваш наполнять." }
-            },
-            en: {
-                tts: 'en-US',
-                ui: { title: "Blessed 2026", desc: "Enter name:", ph: "Name...", start: "Start 🤲", next: "Next ✈️", share: "Share", download: "📸 Save", hint: "Open chest!", days: "d", hours: "h", mins: "m", secs: "s", err_char: "Invalid name.", err_rep: "Repeated.", conf_q: "Are you {name}?", yes: "Yes", no: "No" },
-                coming: { greet: "Dear {name}, may the Almighty grant you success and halal sustenance!", poem: "May Allah guide you day by day,\nKeep all troubles far away.\nIn the coming year so new,\nMay His blessings be with you." },
-                arrived: { greet: "Dear {name}, may the Almighty fill your life with peace!", poem: "New year is here, bright and clear,\nMay faith in heart be ever near.\nGoodness, health, and halal wealth,\nJoy and peace and spiritual health." }
-            },
-            fr: {
-                tts: 'fr-FR',
-                ui: { title: "Béni 2026", desc: "Nom:", ph: "Nom...", start: "Début", next: "Suivant", share: "Partager", download: "📸 Télécharger", hint: "Ouvrir!", days: "j", hours: "h", mins: "m", secs: "s", err_char: "Erreur nom.", err_rep: "Répétition.", conf_q: "Êtes-vous {name}?", yes: "Oui", no: "Non" },
-                coming: { greet: "Cher {name}, qu'Allah vous accorde succès et subsistance halal !", poem: "Qu'Allah éclaire votre chemin,\nEt vous protège chaque matin.\nQue cette année soit un festin,\nDe paix et d'amour sans fin." },
-                arrived: { greet: "Cher {name}, qu'Allah remplisse votre vie de paix !", poem: "Le nouvel an est arrivé,\nQue votre foi soit préservée.\nBonheur, santé et pureté,\nPour toute l'éternité." }
-            },
-            de: {
-                tts: 'de-DE',
-                ui: { title: "Gesegnetes 2026", desc: "Name:", ph: "Name...", start: "Start", next: "Weiter", share: "Teilen", download: "📸 Laden", hint: "Öffnen!", days: "T", hours: "Std", mins: "Min", secs: "Sek", err_char: "Fehler.", err_rep: "Wiederholung.", conf_q: "Bist du {name}?", yes: "Ja", no: "Nein" },
-                coming: { greet: "Lieber {name}, möge Allah dir im neuen Jahr Erfolg schenken!", poem: "Möge Allah dich stets leiten,\nIn allen kommenden Zeiten.\nSegen sei in deinem Haus,\nFrieden tagein, tagaus." },
-                arrived: { greet: "Lieber {name}, möge Allah dein Leben mit Frieden füllen!", poem: "Das neue Jahr ist nun hier,\nGlaube sei stets bei dir.\nGesundheit und reines Glück,\nKein Blick mehr zurück." }
-            },
-            ar: {
-                tts: 'ar-SA',
-                ui: { title: "2026 مبارك", desc: "الاسم:", ph: "الاسم...", start: "ابدأ", next: "التالي", share: "مشاركة", download: "📸 تحميل", hint: "افتح!", days: "ي", hours: "س", mins: "د", secs: "ث", err_char: "خطأ.", err_rep: "تكرار.", conf_q: "هل أنت {name}؟", yes: "نعم", no: "لا" },
-                coming: { greet: "عزيزي {name}، أسأل الله أن يرزقك الرزق الحلال!", poem: "يا رب بارك في العام الجديد،\nواجعل حياة {name} في عيد.\nبالإيمان والتقوى تزيد،\nورضا الرحمن هو المزيد." },
-                arrived: { greet: "عزيزي {name}، أسأل الله أن يملأ حياتك بالبركة!", poem: "عام جديد أقبل علينا،\nنسأل الله اللطف فينا.\nارزقنا يا رب الجنان،\nواحفظنا من كل شيطان." }
-            },
-            zh: {
-                tts: 'zh-CN',
-                ui: { title: "吉祥 2026", desc: "名字:", ph: "名字...", start: "开始", next: "下一个", share: "分享", download: "📸 下载", hint: "打开!", days: "天", hours: "时", mins: "分", secs: "秒", err_char: "错误", err_rep: "重复", conf_q: "是 {name} 吗?", yes: "是", no: "不" },
-                coming: { greet: "亲爱的 {name}，愿真主赐予您合法的给养！", poem: "愿真主赐福新一年，\n平安喜乐常相伴。\n正道光芒照心间，\n生活美满福无边。" },
-                arrived: { greet: "亲爱的 {name}，愿真主让您的生活充满平安！", poem: "新年已至喜气浓，\n心中信仰时刻同。\n健康财富源合法，\n幸福安康伴一生。" }
-            },
-            ko: {
-                tts: 'ko-KR',
-                ui: { title: "축복받은 2026", desc: "이름:", ph: "이름...", start: "시작", next: "다음", share: "공유", download: "📸 다운로드", hint: "열기!", days: "일", hours: "시", mins: "분", secs: "초", err_char: "오류.", err_rep: "반복.", conf_q: "{name} 님?", yes: "네", no: "아니요" },
-                coming: { greet: "{name}님, 새해에는 알라의 축복이 가득하시길!", poem: "알라께서 길을 비추시고,\n모든 걱정 사라지게 하소서.\n다가오는 새해에는,\n축복만이 가득하길." },
-                arrived: { greet: "{name}님, 알라께서 평화로 채워주시길!", poem: "새해가 밝아왔네,\n믿음은 굳건하네.\n건강과 행복이,\n당신과 함께하길." }
-            },
-            ja: {
-                tts: 'ja-JP',
-                ui: { title: "祝福の2026", desc: "名前:", ph: "名前...", start: "開始", next: "次へ", share: "共有", download: "📸 保存", hint: "開ける!", days: "日", hours: "時", mins: "分", secs: "秒", err_char: "エラー", err_rep: "繰り返し", conf_q: "{name}さん?", yes: "はい", no: "いいえ" },
-                coming: { greet: "{name}さん、アッラーの祝福がありますように！", poem: "アッラーが導き給う、\n悩みは消え去りぬ。\n来るべき新年に、\n幸あれと祈る。" },
-                arrived: { greet: "{name}さん、平安が満たされますように！", poem: "新年が来たりて、\n信仰は深まる。\n健やかで清らかに、\n喜び溢れる日々。" }
-            },
-            es: {
-                tts: 'es-ES',
-                ui: { title: "Bendito 2026", desc: "Nombre:", ph: "Nombre...", start: "Iniciar", next: "Siguiente", share: "Compartir", download: "📸 Bajar", hint: "¡Abrir!", days: "d", hours: "h", mins: "m", secs: "s", err_char: "Error.", err_rep: "Repetición.", conf_q: "¿Eres {name}?", yes: "Sí", no: "No" },
-                coming: { greet: "Querido {name}, ¡que Alá te conceda éxito!", poem: "Que Allah guíe tu caminar,\nY te aleje de todo mal.\nEn este año que va a empezar,\nMucha paz te va a regalar." },
-                arrived: { greet: "Querido {name}, ¡que Alá llene tu vida de paz!", poem: "El año nuevo ya llegó,\nLa fe en el alma floreció.\nSalud y paz en tu hogar,\nBendiciones sin cesar." }
-            },
-            mn: {
-                tts: 'mn-MN', // Көп телефонда жоқ, бірақ қосып қойдық
-                ui: { title: "Ивээлт 2026", desc: "Нэр:", ph: "Нэр...", start: "Эхлэх", next: "Дараах", share: "Хуваалцах", download: "📸 Татах", hint: "Нээх!", days: "өдөр", hours: "цаг", mins: "мин", secs: "сек", err_char: "Алдаа.", err_rep: "Давталт.", conf_q: "{name} мөн үү?", yes: "Тийм", no: "Үгүй" },
-                coming: { greet: "Эрхэм {name}, Аллах танд ивээлээ хайрлаг!", poem: "Аллах таныг ивээг,\nЗовлон бүхнийг мартуулаг.\nИрж буй шинэ жилд,\nАз жаргал дүүрэн байг." },
-                arrived: { greet: "Эрхэм {name}, Аллах таны амьдралыг амар амгалан болгог!", poem: "Шинэ он ирлээ,\nСүсэг бишрэл нэмэгдлээ.\nЭрүүл энх, сайн сайхан,\nҮүрд мөнх байг." }
-            }
+            kk: { tts: 'kk-KZ', ui: { title: "Берекелі 2026 Жыл", desc: "Атыңызды енгізіңіз:", ph: "Атыңыз...", start: "Бастау 🤲", next: "Келесі ел ✈️", share: "Бөлісу 🔗", download: "📸 Открытка жүктеу", hint: "Сыйлықты ашу! 🎁", days: "күн", hours: "сағ", mins: "мин", secs: "сек", err_char: "Атта қате бар.", err_rep: "Әріп қайталанды.", conf_q: "Сіз {name}сіз бе?", yes: "Иә", no: "Жоқ" }, coming: { greet: "Құрметті {name}, келе жатқан Жаңа жылда Алла Тағала екі дүниенің жақсылығын нәсіп етсін!", poem: "Алла қолдап әр ісіңді оң қылсын,\nРизық-несібең адалынан мол болсын.\nКеле жатқан жылда бәрі жаңарып,\nИманыңыз нұрға толар жыл болсын!" }, arrived: { greet: "Құрметті {name}, Жаңа жылда Алла әрбір күніңізге береке берсін!", poem: "Жаңа жылда жақсылықтар көп болсын,\nУайым-қайғы ешқашанда жоқ болсын.\nАлла берген ғұмырыңыз мәнді боп,\nДастарханың адал асқа лық толсын!" } },
+            ru: { tts: 'ru-RU', ui: { title: "Благословенный 2026", desc: "Введите имя:", ph: "Ваше имя...", start: "Открыть 🤲", next: "Далее ✈️", share: "Поделиться", download: "📸 Скачать", hint: "Откройте сундук!", days: "д", hours: "ч", mins: "м", secs: "с", err_char: "Ошибка в имени.", err_rep: "Повтор букв.", conf_q: "Вас зовут {name}?", yes: "Да", no: "Нет" }, coming: { greet: "Уважаемый {name}, пусть Всевышний дарует благополучие в новом году!", poem: "Пусть Аллах хранит от бед,\nДарит мудрость и совет.\nВ наступающем году,\nОтводит горе и беду." }, arrived: { greet: "Уважаемый {name}, пусть Всевышний наполнит дом баракатом!", poem: "Год пришел, хвала Творцу,\nСчастье пусть придет к лицу.\nМир, покой и благодать,\nБудут дом ваш наполнять." } },
+            en: { tts: 'en-US', ui: { title: "Blessed 2026", desc: "Enter name:", ph: "Name...", start: "Start 🤲", next: "Next ✈️", share: "Share", download: "📸 Save", hint: "Open chest!", days: "d", hours: "h", mins: "m", secs: "s", err_char: "Invalid name.", err_rep: "Repeated.", conf_q: "Are you {name}?", yes: "Yes", no: "No" }, coming: { greet: "Dear {name}, may the Almighty grant you success and halal sustenance!", poem: "May Allah guide you day by day,\nKeep all troubles far away.\nIn the coming year so new,\nMay His blessings be with you." }, arrived: { greet: "Dear {name}, may the Almighty fill your life with peace!", poem: "New year is here, bright and clear,\nMay faith in heart be ever near.\nGoodness, health, and halal wealth,\nJoy and peace and spiritual health." } },
+            ar: { tts: 'ar-SA', ui: { title: "2026 مبارك", desc: "الاسم:", ph: "الاسم...", start: "ابدأ", next: "التالي", share: "مشاركة", download: "📸 تحميل", hint: "افتح!", days: "ي", hours: "س", mins: "د", secs: "ث", err_char: "خطأ.", err_rep: "تكرار.", conf_q: "هل أنت {name}؟", yes: "نعم", no: "لا" }, coming: { greet: "عزيزي {name}، أسأل الله أن يرزقك الرزق الحلال!", poem: "يا رب بارك في العام الجديد،\nواجعل حياة {name} في عيد.\nبالإيمان والتقوى تزيد،\nورضا الرحمن هو المزيد." }, arrived: { greet: "عزيزي {name}، أسأل الله أن يملأ حياتك بالبركة!", poem: "عام جديد أقبل علينا،\nنسأل الله اللطف فينا.\nارزقنا يا رب الجنان،\nواحفظنا من كل شيطان." } },
+            tr: { tts: 'tr-TR', ui: { title: "Bereketli 2026", desc: "Adınız:", ph: "Adınız...", start: "Başla", next: "Sonraki", share: "Paylaş", download: "📸 İndir", hint: "Aç!", days: "g", hours: "s", mins: "dk", secs: "sn", err_char: "Hata.", err_rep: "Tekrar.", conf_q: "Adınız {name} mı?", yes: "Evet", no: "Hayır" }, coming: { greet: "Sevgili {name}, Allah hayırlı rızıklar nasip etsin!", poem: "Rabbim yolunu açık etsin,\nHer türlü dertten seni korusun.\nYeni yılda tüm duaların,\nHayırlısıyla kabul olsun." }, arrived: { greet: "Sevgili {name}, Allah hanenize bereket versin!", poem: "Yeni yıl geldi hoş geldi,\nGönlüne iman dolsun ebedi.\nRabbimden dilerim saadet,\nHayatın olsun hep selamet." } },
+            fr: { tts: 'fr-FR', ui: { title: "Béni 2026", desc: "Nom:", ph: "Nom...", start: "Début", next: "Suivant", share: "Partager", download: "📸 Télécharger", hint: "Ouvrir!", days: "j", hours: "h", mins: "m", secs: "s", err_char: "Erreur.", err_rep: "Répétition.", conf_q: "Êtes-vous {name}?", yes: "Oui", no: "Non" }, coming: { greet: "Cher {name}, qu'Allah vous accorde succès !", poem: "Qu'Allah éclaire votre chemin,\nEt vous protège chaque matin.\nQue cette année soit un festin,\nDe paix et d'amour sans fin." }, arrived: { greet: "Cher {name}, qu'Allah remplisse votre vie de paix !", poem: "Le nouvel an est arrivé,\nQue votre foi soit préservée.\nBonheur, santé et pureté,\nPour toute l'éternité." } },
+            de: { tts: 'de-DE', ui: { title: "Gesegnetes 2026", desc: "Name:", ph: "Name...", start: "Start", next: "Weiter", share: "Teilen", download: "📸 Laden", hint: "Öffnen!", days: "T", hours: "Std", mins: "Min", secs: "Sek", err_char: "Fehler.", err_rep: "Wiederholung.", conf_q: "Bist du {name}?", yes: "Ja", no: "Nein" }, coming: { greet: "Lieber {name}, möge Allah dir Erfolg schenken!", poem: "Möge Allah dich stets leiten,\nIn allen kommenden Zeiten.\nSegen sei in deinem Haus,\nFrieden tagein, tagaus." }, arrived: { greet: "Lieber {name}, möge Allah dein Leben füllen!", poem: "Das neue Jahr ist nun hier,\nGlaube sei stets bei dir.\nGesundheit und reines Glück,\nKein Blick mehr zurück." } },
+            zh: { tts: 'zh-CN', ui: { title: "吉祥 2026", desc: "名字:", ph: "名字...", start: "开始", next: "下一个", share: "分享", download: "📸 下载", hint: "打开!", days: "天", hours: "时", mins: "分", secs: "秒", err_char: "错误", err_rep: "重复", conf_q: "是 {name} 吗?", yes: "是", no: "不" }, coming: { greet: "亲爱的 {name}，愿真主赐予您给养！", poem: "愿真主赐福新一年，\n平安喜乐常相伴。\n正道光芒照心间，\n生活美满福无边。" }, arrived: { greet: "亲爱的 {name}，愿真主赐平安！", poem: "新年已至喜气浓，\n心中信仰时刻同。\n健康财富源合法，\n幸福安康伴一生。" } },
+            ko: { tts: 'ko-KR', ui: { title: "축복받은 2026", desc: "이름:", ph: "이름...", start: "시작", next: "다음", share: "공유", download: "📸 다운로드", hint: "열기!", days: "일", hours: "시", mins: "분", secs: "초", err_char: "오류.", err_rep: "반복.", conf_q: "{name} 님?", yes: "네", no: "아니요" }, coming: { greet: "{name}님, 알라의 축복이 가득하시길!", poem: "알라께서 길을 비추시고,\n모든 걱정 사라지게 하소서.\n다가오는 새해에는,\n축복만이 가득하길." }, arrived: { greet: "{name}님, 평화로 채워주시길!", poem: "새해가 밝아왔네,\n믿음은 굳건하네.\n건강과 행복이,\n당신과 함께하길." } },
+            ja: { tts: 'ja-JP', ui: { title: "祝福の2026", desc: "名前:", ph: "名前...", start: "開始", next: "次へ", share: "共有", download: "📸 保存", hint: "開ける!", days: "日", hours: "時", mins: "分", secs: "秒", err_char: "エラー", err_rep: "繰り返し", conf_q: "{name}さん?", yes: "はい", no: "いいえ" }, coming: { greet: "{name}さん、アッラーの祝福がありますように！", poem: "アッラーが導き給う、\n悩みは消え去りぬ。\n来るべき新年に、\n幸あれと祈る。" }, arrived: { greet: "{name}さん、平安が満たされますように！", poem: "新年が来たりて、\n信仰は深まる。\n健やかで清らかに、\n喜び溢れる日々。" } },
+            es: { tts: 'es-ES', ui: { title: "Bendito 2026", desc: "Nombre:", ph: "Nombre...", start: "Iniciar", next: "Siguiente", share: "Compartir", download: "📸 Bajar", hint: "¡Abrir!", days: "d", hours: "h", mins: "m", secs: "s", err_char: "Error.", err_rep: "Repetición.", conf_q: "¿Eres {name}?", yes: "Sí", no: "No" }, coming: { greet: "Querido {name}, ¡que Alá te conceda éxito!", poem: "Que Allah guíe tu caminar,\nY te aleje de todo mal.\nEn este año que va a empezar,\nMucha paz te va a regalar." }, arrived: { greet: "Querido {name}, ¡que Alá llene tu vida de paz!", poem: "El año nuevo ya llegó,\nLa fe en el alma floreció.\nSalud y paz en tu hogar,\nBendiciones sin cesar." } },
+            mn: { tts: 'mn-MN', ui: { title: "Ивээлт 2026", desc: "Нэр:", ph: "Нэр...", start: "Эхлэх", next: "Дараах", share: "Хуваалцах", download: "📸 Татах", hint: "Нээх!", days: "өдөр", hours: "цаг", mins: "мин", secs: "сек", err_char: "Алдаа.", err_rep: "Давталт.", conf_q: "{name} мөн үү?", yes: "Тийм", no: "Үгүй" }, coming: { greet: "Эрхэм {name}, Аллах ивээлээ хайрлаг!", poem: "Аллах таныг ивээг,\nЗовлон бүхнийг мартуулаг.\nИрж буй шинэ жилд,\nАз жаргал дүүрэн байг." }, arrived: { greet: "Эрхэм {name}, амьдралыг амар амгалан болгог!", poem: "Шинэ он ирлээ,\nСүсэг бишрэл нэмэгдлээ.\nЭрүүл энх, сайн сайхан,\nҮүрд мөнх байг." } }
         };
 
         const destinations = [
             { name: "Astana 🇰🇿", coords: [51.16, 71.47], lang: "kk" },
             { name: "Moscow 🇷🇺", coords: [55.75, 37.61], lang: "ru" },
             { name: "London 🇬🇧", coords: [51.50, -0.12], lang: "en" },
+            { name: "Mecca 🇸🇦", coords: [21.38, 39.85], lang: "ar" },
+            { name: "Istanbul 🇹🇷", coords: [41.00, 28.97], lang: "tr" },
+            { name: "Beijing 🇨🇳", coords: [39.90, 116.40], lang: "zh" },
             { name: "Paris 🇫🇷", coords: [48.85, 2.35], lang: "fr" },
             { name: "Berlin 🇩🇪", coords: [52.52, 13.40], lang: "de" },
-            { name: "Mecca 🇸🇦", coords: [21.38, 39.85], lang: "ar" },
-            { name: "Beijing 🇨🇳", coords: [39.90, 116.40], lang: "zh" },
             { name: "Seoul 🇰🇷", coords: [37.56, 126.97], lang: "ko" },
             { name: "Tokyo 🇯🇵", coords: [35.67, 139.65], lang: "ja" },
             { name: "Madrid 🇪🇸", coords: [40.41, -3.70], lang: "es" },
@@ -254,7 +216,7 @@
         let map, planeMarker, flightLine;
         let currentDestIndex = 0;
         let userName = "Досым";
-        let isVoiceEnabled = true;
+        let isVoiceEnabled = true; // Default On
         const synth = window.speechSynthesis;
 
         window.onload = () => {
@@ -275,7 +237,7 @@
         function initMap() {
             map = L.map('map', { zoomControl: false }).setView([40, 0], 3);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '', subdomains: 'abcd', maxZoom: 19 }).addTo(map);
-            const planeIcon = L.divIcon({ html: '<div style="font-size: 40px;">✈️</div>', className: 'plane-icon', iconSize: [40, 40], iconAnchor: [20, 20] });
+            const planeIcon = L.divIcon({ html: '<div style="font-size: 35px;">✈️</div>', className: 'plane-icon', iconSize: [35, 35], iconAnchor: [17, 17] });
             planeMarker = L.marker([51.16, 71.47], {icon: planeIcon}).addTo(map);
         }
 
@@ -360,36 +322,28 @@
             if (!document.getElementById('contentWrapper').classList.contains('hidden')) updateCardContent();
         }
 
-        // --- ДЫБЫСТАП ОҚУ (TTS) ---
         function toggleVoice() {
             isVoiceEnabled = !isVoiceEnabled;
             const btn = document.getElementById('voiceBtn');
             if (isVoiceEnabled) {
-                btn.textContent = "🗣️"; // Speaker On
-                btn.classList.add('speaking');
-                // Егер сандық ашық болса, бірден оқып бастау
+                btn.textContent = "🗣️"; btn.classList.add('speaking');
                 if (!document.getElementById('contentWrapper').classList.contains('hidden')) {
                     const text = document.getElementById('poemBox').textContent;
                     const lang = document.getElementById('uiLangSelect').value;
                     speakText(text, lang);
                 }
             } else {
-                btn.textContent = "🔇"; // Mute
-                btn.classList.remove('speaking');
+                btn.textContent = "🔇"; btn.classList.remove('speaking');
                 synth.cancel();
             }
         }
 
         function speakText(text, langCode) {
             if (!isVoiceEnabled) return;
-            synth.cancel(); // Алдыңғысын тоқтату
-            
+            synth.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
-            // Тіл кодын алу (мысалы 'en-US')
-            utterance.lang = translations[langCode].tts || 'en-US'; 
-            utterance.rate = 0.9; // Сәл баяу оқу
-            utterance.pitch = 1.1; // Сәл жіңішке дауыс
-            
+            utterance.lang = translations[langCode].tts || 'en-US';
+            utterance.rate = 0.9; 
             synth.speak(utterance);
         }
 
@@ -399,17 +353,13 @@
             const emojis = confetti.shapeFromText({ text: '🐴', scalar });
             const flowers = confetti.shapeFromText({ text: '🌸', scalar });
             confetti({ particleCount: 15, scalar: 3, spread: 100, origin: { x: 0.75, y: 0.7 }, shapes: [emojis, flowers] });
-            
             document.getElementById('chestWrapper').style.display = 'none';
             document.getElementById('contentWrapper').classList.remove('hidden');
             document.getElementById('controlButtons').classList.remove('hidden');
-            
-            // Батырманы белсенді ету (визуалды)
-            if (isVoiceEnabled) {
+            if(isVoiceEnabled) {
                 document.getElementById('voiceBtn').textContent = "🗣️";
                 document.getElementById('voiceBtn').classList.add('speaking');
             }
-            
             updateCardContent();
         }
 
@@ -420,19 +370,13 @@
             const t = translations[langCode];
             const now = new Date().getTime();
             const data = (now >= targetDate) ? t.arrived : t.coming;
-            
-            const poemText = data.poem;
-            const greetingText = data.greet.replace("{name}", userName);
-
             document.getElementById('cityName').textContent = city.name;
-            document.getElementById('greetingMsg').innerHTML = greetingText.replace(userName, `<b style="color:#FFD700">${userName}</b>`);
-            document.getElementById('poemBox').textContent = poemText;
+            document.getElementById('greetingMsg').innerHTML = data.greet.replace("{name}", `<b style="color:#FFD700">${userName}</b>`);
+            document.getElementById('poemBox').textContent = data.poem;
             document.getElementById('btnNext').textContent = t.ui.next;
             document.getElementById('btnShare').textContent = t.ui.share;
             document.getElementById('btnDownload').textContent = t.ui.download;
-
-            // Өлеңді оқу
-            speakText(poemText, langCode);
+            speakText(data.poem, langCode);
         }
 
         function nextCity() {
