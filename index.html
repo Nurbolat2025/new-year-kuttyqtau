@@ -5,64 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global 2026 Greeting</title>
     
+    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0d47a1">
     <link rel="icon" type="image/png" href="icon-192.png">
-
+    
+    <!-- Leaflet (карта) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
+    <!-- Конфетти және скриншот -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-
+    
     <style>
         body { margin: 0; padding: 0; height: 100vh; display: flex; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; background: #1a1a1a; color: white; }
-
-        /* --- СОЛ ЖАҚ (КАРТА 60%) --- */
+        /* СОЛ ЖАҚ – КАРТА (60%) */
         #map-container { width: 60%; height: 100%; position: relative; }
         #map { width: 100%; height: 100%; z-index: 1; }
-        
-        /* --- ОҢ ЖАҚ (ПАНЕЛЬ 40%) --- */
+       
+        /* ОҢ ЖАҚ – ПАНЕЛЬ (40%) */
         #sidebar {
             width: 40%; height: 100%;
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.5); z-index: 2; overflow-y: auto;
         }
-
-        /* --- ЖОҒАРҒЫ МӘЗІР --- */
-        .top-controls { position: absolute; top: 20px; right: 20px; z-index: 1000; display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; width: 80%; pointer-events: none; }
-        .top-controls > * { pointer-events: auto; } /* Түймелер істеуі үшін */
-        
-        .icon-btn { background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .lang-select { background: rgba(255, 255, 255, 0.9); border-radius: 20px; padding: 5px 10px; font-weight: bold; border: none; cursor: pointer; outline: none; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-
+        /* ЖОҒАРҒЫ БАСҚАРУ */
+        .top-controls { 
+            position: absolute; top: 20px; right: 20px; z-index: 1000; 
+            display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; 
+            pointer-events: none; 
+        }
+        .top-controls > * { pointer-events: auto; }
+       
+        .icon-btn { 
+            background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.3); 
+            border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; 
+        }
+        .lang-select { 
+            background: rgba(255, 255, 255, 0.9); color: #000; border-radius: 20px; padding: 5px 10px; 
+            font-weight: bold; border: none; cursor: pointer; outline: none; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3); 
+        }
         h1 { color: #FFD700; text-shadow: 0 0 10px #FF8C00; font-size: 1.8rem; margin-bottom: 20px; text-align: center;}
-        
-        .countdown-box { font-family: 'Courier New', monospace; background: rgba(0, 255, 255, 0.1); color: #84ffff; padding: 10px; border-radius: 12px; margin: 10px 0; font-size: 1.1rem; border: 1px solid rgba(132, 255, 255, 0.3); text-shadow: 0 0 5px #84ffff; width: 90%; text-align: center; }
-        
+       
+        .countdown-box { 
+            font-family: 'Courier New', monospace; background: rgba(0, 255, 255, 0.1); color: #84ffff; 
+            padding: 10px; border-radius: 12px; margin: 10px 0; font-size: 1.1rem; 
+            border: 1px solid rgba(132, 255, 255, 0.3); text-shadow: 0 0 5px #84ffff; 
+            width: 90%; text-align: center; 
+        }
+        .time-info {
+            font-size: 1.1rem;
+            color: #84ffff;
+            margin: 10px 0;
+            text-shadow: 0 0 5px #84ffff;
+        }
+       
         .chest-wrapper { margin: 20px 0; cursor: pointer; animation: float 3s ease-in-out infinite; text-align: center;}
         .chest-icon { font-size: 80px; filter: drop-shadow(0 0 20px gold); }
         .chest-hint { font-size: 0.9rem; color: #aaa; margin-top: 10px; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-
-        .card-content { background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 20px; width: 90%; text-align: center; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .card-content { 
+            background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 20px; 
+            width: 90%; text-align: center; margin-bottom: 10px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+        }
         .city-name { font-size: 2rem; color: #4DD0E1; margin: 5px 0; text-shadow: 2px 2px 4px black; }
         .greeting-text { font-size: 1.1rem; line-height: 1.5; color: #fff; margin: 15px 0; }
-        
-        .poem-box { background: rgba(0, 40, 0, 0.6); padding: 15px; border-radius: 15px; margin: 15px 0; border-left: 4px solid #FFD700; font-style: italic; white-space: pre-line; color: #fffde7; font-size: 1rem; line-height: 1.6; text-shadow: 1px 1px 2px black; border: 1px solid rgba(255, 215, 0, 0.2); }
-
+       
+        .poem-box { 
+            background: rgba(0, 40, 0, 0.6); padding: 15px; border-radius: 15px; margin: 15px 0; 
+            border-left: 4px solid #FFD700; font-style: italic; white-space: pre-line; 
+            color: #fffde7; font-size: 1rem; line-height: 1.6; text-shadow: 1px 1px 2px black; 
+            border: 1px solid rgba(255, 215, 0, 0.2); 
+        }
         input { width: 85%; padding: 12px; margin: 10px 0; border-radius: 12px; border: none; text-align: center; font-size: 16px; }
-        .main-btn { width: 100%; padding: 12px; margin: 5px 0; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%); color: #000; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); transition: transform 0.2s; }
+        .main-btn { 
+            width: 100%; padding: 12px; margin: 5px 0; border-radius: 12px; border: none; 
+            font-size: 16px; font-weight: bold; background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%); 
+            color: #000; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); transition: transform 0.2s; 
+        }
         .main-btn:active { transform: scale(0.95); }
         .share-btn { background: linear-gradient(135deg, #eee 0%, #ccc 100%); color: #333; }
         .download-btn { background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); color: white; }
         .confirm-btn { background: #4CAF50; color: white; width: 45%; margin: 5px;}
         .deny-btn { background: #F44336; color: white; width: 45%; margin: 5px;}
-
         .hidden { display: none !important; }
         .plane-icon { font-size: 40px; text-shadow: 0 0 10px black; transition: all 1s ease-in-out; }
-
+        
         @media (max-width: 768px) {
             body { flex-direction: column; }
             #map-container { width: 100%; height: 40%; }
@@ -71,7 +105,6 @@
     </style>
 </head>
 <body>
-
     <div id="map-container">
         <div id="map"></div>
         <div class="top-controls">
@@ -91,13 +124,12 @@
             </select>
         </div>
     </div>
-
     <div id="sidebar">
         <div id="loginScreen" style="width: 100%; text-align: center;">
             <h1>🌙 Берекелі 2026</h1>
             <div id="loginCountdown" class="countdown-box">Жүктелуде...</div>
             <p id="appDesc">Адал ниетпен құттықтау жолдаңыз!</p>
-            
+           
             <div id="confirmNameBlock" class="hidden" style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; margin-top: 10px;">
                 <p id="confirmQuestion" style="font-size: 1.1rem; margin-bottom: 10px;">Сіздің атыңыз <b id="detectedName" style="color: #FFD700;"></b> ба?</p>
                 <div style="display: flex; justify-content: center;">
@@ -105,17 +137,16 @@
                     <button onclick="confirmNameNo()" class="main-btn deny-btn" id="btnNo">Жоқ ❌</button>
                 </div>
             </div>
-
             <div id="inputNameBlock">
                 <input type="text" id="nameInput" placeholder="Есіміңіз...">
                 <div id="errorMsg" style="color: #FF5252; display: none; font-size: 0.9em; margin-top: 5px;"></div>
                 <button onclick="startJourney()" class="main-btn" id="btnStart">Бастау 🤲</button>
             </div>
         </div>
-
         <div id="journeyScreen" class="hidden" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
             <div id="captureArea" class="card-content">
                 <div id="mainCountdown" class="countdown-box" style="width: 95%; margin: 0 auto 10px auto;"></div>
+                <div id="timeInfo" class="time-info"></div>
                 <div id="chestWrapper" class="chest-wrapper" onclick="openChest()">
                     <div class="chest-icon">🎁</div>
                     <div class="chest-hint" id="chestHint">Сыйлықты ашу үшін басыңыз!</div>
@@ -126,33 +157,31 @@
                     <div id="poemBox" class="poem-box">...</div>
                 </div>
             </div>
-            
+           
             <div id="controlButtons" class="hidden" style="width: 100%;">
                 <button onclick="downloadCard()" class="main-btn download-btn" id="btnDownload">📸 Сурет ретінде жүктеу</button>
                 <button onclick="nextCity()" class="main-btn" id="btnNext">Келесі ел ✈️</button>
                 <button onclick="shareGreeting()" class="main-btn share-btn" id="btnShare">Бөлісу 🔗</button>
             </div>
         </div>
-
         <div style="margin-top: 20px; opacity: 0.7;">
             <a href="https://info.flagcounter.com/YourNewID" target="_blank">
                 <img src="https://s11.flagcounter.com/count2/p2x2/bg_000000/txt_FFFFFF/border_CCCCCC/columns_4/maxflags_12/viewers_0/labels_0/pageviews_0/flags_0/percent_0/" alt="Flag Counter" border="0">
             </a>
         </div>
     </div>
-
+    
+    <!-- Фондық музыка (Ислам дініне сай – аспаптық, әнсіз, мерекелік емес, тыныш инструментал) -->
     <audio id="bgMusic" loop>
-        <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_1f23348651.mp3" type="audio/mp3">
+        <source src="https://cdn.pixabay.com/download/audio/2023/03/21/audio_8d5d8d5d8f.mp3?filename=relaxing-149407.mp3" type="audio/mp3">
     </audio>
 
     <script>
         const targetDate = new Date("January 1, 2026 00:00:00").getTime();
 
-        // 11 ТІЛ, ШАРИҒАТҚА САЙ ӨЛЕҢДЕР
         const translations = {
             kk: {
-                ui: { title: "Берекелі 2026 Жыл", desc: "Атыңызды енгізіңіз:", ph: "Атыңыз...", start: "Бастау 🤲", next: "Келесі ел ✈️", share: "Бөлісу 🔗", download: "📸 Открытка жүктеу", hint: "Сыйлықты ашу! 🎁", days: "күн", hours: "сағ", mins: "мин", secs: "сек", err_char: "Атта қате бар.", err_rep: "Әріп қайталанды.", conf_q: "Сіз {name}сіз бе?", yes: "Иә", no: "Жоқ" },
-                // Сіз сұраған өзгерістер осында:
+                ui: { title: "Берекелі 2026", desc: "Атыңызды енгізіңіз:", ph: "Атыңыз...", start: "Бастау 🤲", next: "Келесі ел ✈️", share: "Бөлісу 🔗", download: "📸 Открытка жүктеу", hint: "Сыйлықты ашу үшін басыңыз!", days: "күн", hours: "сағат", mins: "минут", secs: "секунд", err_char: "Атта қате таңба бар.", err_rep: "Әріп қайталанды.", conf_q: "Сіздің атыңыз {name} па?", yes: "Иә", no: "Жоқ" },
                 coming: { greet: "Құрметті {name}, келе жатқан Жаңа жылда Алла Тағала екі дүниенің жақсылығын нәсіп етсін!", poem: "Алла қолдап әр ісіңді оң қылсын,\nРизық-несібең адалынан мол болсын.\nКеле жатқан жылда бәрі жаңарып,\nИманыңыз нұрға толар жыл болсын!" },
                 arrived: { greet: "Құрметті {name}, Жаңа жылда Алла әрбір күніңізге береке берсін!", poem: "Жаңа жылда жақсылықтар көп болсын,\nУайым-қайғы ешқашанда жоқ болсын.\nАлла берген ғұмырыңыз мәнді боп,\nДастарханың адал асқа лық толсын!" }
             },
@@ -209,17 +238,17 @@
         };
 
         const destinations = [
-            { name: "Astana 🇰🇿", coords: [51.16, 71.47], lang: "kk" },
-            { name: "Moscow 🇷🇺", coords: [55.75, 37.61], lang: "ru" },
-            { name: "London 🇬🇧", coords: [51.50, -0.12], lang: "en" },
-            { name: "Paris 🇫🇷", coords: [48.85, 2.35], lang: "fr" },
-            { name: "Berlin 🇩🇪", coords: [52.52, 13.40], lang: "de" },
-            { name: "Mecca 🇸🇦", coords: [21.38, 39.85], lang: "ar" },
-            { name: "Beijing 🇨🇳", coords: [39.90, 116.40], lang: "zh" },
-            { name: "Seoul 🇰🇷", coords: [37.56, 126.97], lang: "ko" },
-            { name: "Tokyo 🇯🇵", coords: [35.67, 139.65], lang: "ja" },
-            { name: "Madrid 🇪🇸", coords: [40.41, -3.70], lang: "es" },
-            { name: "Ulaanbaatar 🇲🇳", coords: [47.91, 106.91], lang: "mn" }
+            { name: "Astana 🇰🇿", coords: [51.16, 71.47], lang: "kk", timezone: "Asia/Almaty" },
+            { name: "Moscow 🇷🇺", coords: [55.75, 37.61], lang: "ru", timezone: "Europe/Moscow" },
+            { name: "London 🇬🇧", coords: [51.50, -0.12], lang: "en", timezone: "Europe/London" },
+            { name: "Paris 🇫🇷", coords: [48.85, 2.35], lang: "fr", timezone: "Europe/Paris" },
+            { name: "Berlin 🇩🇪", coords: [52.52, 13.40], lang: "de", timezone: "Europe/Berlin" },
+            { name: "Mecca 🇸🇦", coords: [21.38, 39.85], lang: "ar", timezone: "Asia/Riyadh" },
+            { name: "Beijing 🇨🇳", coords: [39.90, 116.40], lang: "zh", timezone: "Asia/Shanghai" },
+            { name: "Seoul 🇰🇷", coords: [37.56, 126.97], lang: "ko", timezone: "Asia/Seoul" },
+            { name: "Tokyo 🇯🇵", coords: [35.67, 139.65], lang: "ja", timezone: "Asia/Tokyo" },
+            { name: "Madrid 🇪🇸", coords: [40.41, -3.70], lang: "es", timezone: "Europe/Madrid" },
+            { name: "Ulaanbaatar 🇲🇳", coords: [47.91, 106.91], lang: "mn", timezone: "Asia/Ulaanbaatar" }
         ];
 
         let map, planeMarker, flightLine;
@@ -231,23 +260,33 @@
         window.onload = () => {
             initMap();
             setInterval(updateCountdown, 1000);
-            updateCountdown(); 
+            updateCountdown();
             const urlParams = new URLSearchParams(window.location.search);
             const sharedName = urlParams.get('name');
             if (sharedName) {
+                userName = decodeURIComponent(sharedName);
+                document.getElementById('detectedName').textContent = userName;
                 document.getElementById('confirmNameBlock').classList.remove('hidden');
                 document.getElementById('inputNameBlock').classList.add('hidden');
-                document.getElementById('detectedName').textContent = sharedName;
-                userName = sharedName;
             }
             changeLanguage();
         };
 
         function initMap() {
-            map = L.map('map', { zoomControl: false }).setView([40, 0], 3);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '', subdomains: 'abcd', maxZoom: 19 }).addTo(map);
-            const planeIcon = L.divIcon({ html: '<div style="font-size: 40px;">✈️</div>', className: 'plane-icon', iconSize: [40, 40], iconAnchor: [20, 20] });
-            planeMarker = L.marker([51.16, 71.47], {icon: planeIcon}).addTo(map);
+            map = L.map('map', { zoomControl: false }).setView([40, 0], 2);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(map);
+
+            const planeIcon = L.divIcon({
+                html: '<div class="plane-icon">✈️</div>',
+                className: '',
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            });
+            planeMarker = L.marker([51.16, 71.47], { icon: planeIcon }).addTo(map);
         }
 
         function validateName(name) {
@@ -262,13 +301,12 @@
             const t = translations[lang].ui;
             const errorDiv = document.getElementById('errorMsg');
 
-            if (!inputVal) { userName = "Досым"; } 
-            else {
-                const status = validateName(inputVal);
-                if (status === "char") { errorDiv.textContent = t.err_char; errorDiv.style.display = 'block'; return; }
-                else if (status === "repeat") { errorDiv.textContent = t.err_rep; errorDiv.style.display = 'block'; return; }
-                userName = inputVal;
-            }
+            let tempName = inputVal || "Досым";
+            const status = validateName(tempName);
+            if (status === "char") { errorDiv.textContent = t.err_char; errorDiv.style.display = 'block'; return; }
+            if (status === "repeat") { errorDiv.textContent = t.err_rep; errorDiv.style.display = 'block'; return; }
+
+            userName = tempName;
             errorDiv.style.display = 'none';
             proceedToJourney();
         }
@@ -283,20 +321,22 @@
         function proceedToJourney() {
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('journeyScreen').classList.remove('hidden');
-            if (!isMusicPlaying) toggleMusic();
+            toggleMusic(); // Автоматты қосу
             const lang = document.getElementById('uiLangSelect').value;
             const cityIndex = destinations.findIndex(d => d.lang === lang);
-            if(cityIndex !== -1) currentDestIndex = cityIndex;
+            if (cityIndex !== -1) currentDestIndex = cityIndex;
             flyToCity(destinations[currentDestIndex]);
+            updateTime();
         }
 
         function flyToCity(city) {
             const oldLatLng = planeMarker.getLatLng();
-            const newLatLng = city.coords;
-            map.flyTo(newLatLng, 5, { duration: 2.5 });
+            const newLatLng = L.latLng(city.coords[0], city.coords[1]);
+            map.flyTo(newLatLng, 5, { duration: 3 });
             planeMarker.setLatLng(newLatLng);
+
             if (flightLine) map.removeLayer(flightLine);
-            flightLine = L.polyline([oldLatLng, newLatLng], {color: '#FFD700', weight: 3, opacity: 0.8, dashArray: '10, 10'}).addTo(map);
+            flightLine = L.polyline([oldLatLng, newLatLng], { color: '#FFD700', weight: 4, opacity: 0.8, dashArray: '15, 10' }).addTo(map);
         }
 
         function updateCountdown() {
@@ -304,49 +344,71 @@
             const distance = targetDate - now;
             const lang = document.getElementById('uiLangSelect').value;
             const t = translations[lang].ui;
+
             if (distance < 0) {
-                document.getElementById('loginCountdown').textContent = "🎉 2026!";
-                document.getElementById('mainCountdown').textContent = "🎉 2026!";
-            } else {
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                const timeStr = `⏳ ${days}${t.days} ${hours}${t.hours} ${minutes}${t.mins} ${seconds}${t.secs}`;
-                document.getElementById('loginCountdown').textContent = timeStr;
-                document.getElementById('mainCountdown').textContent = timeStr;
+                document.getElementById('loginCountdown').textContent = "🎉 2026 Жыл Келді!";
+                document.getElementById('mainCountdown').textContent = "🎉 2026 Жыл Келді!";
+                return;
             }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const timeStr = `${days}${t.days} ${hours}${t.hours} ${minutes}${t.mins} ${seconds}${t.secs}`;
+            document.getElementById('loginCountdown').textContent = timeStr;
+            document.getElementById('mainCountdown').textContent = timeStr;
+        }
+
+        function updateTime() {
+            const currentCity = destinations[currentDestIndex];
+            const timezone = currentCity.timezone;
+            const now = new Date();
+            const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            const formatter = new Intl.DateTimeFormat(currentLang || 'kk', options);
+            const timeStr = formatter.format(now);
+            document.getElementById('timeInfo').textContent = `Қазір ${currentCity.name} қаласында сағат: ${timeStr}`;
         }
 
         function changeLanguage() {
             const lang = document.getElementById('uiLangSelect').value;
             const t = translations[lang].ui;
+
             document.querySelector('#loginScreen h1').textContent = t.title;
             document.getElementById('appDesc').textContent = t.desc;
             document.getElementById('nameInput').placeholder = t.ph;
             document.getElementById('btnStart').textContent = t.start;
             document.getElementById('chestHint').textContent = t.hint;
-            document.getElementById('confirmQuestion').innerHTML = t.conf_q.replace("{name}", `<b style="color:#FFD700">${userName}</b>`);
-            document.getElementById('btnYes').textContent = t.yes;
-            document.getElementById('btnNo').textContent = t.no;
-            if (!document.getElementById('contentWrapper').classList.contains('hidden')) updateCardContent();
+            document.getElementById('btnNext').textContent = t.next;
+            document.getElementById('btnShare').textContent = t.share;
+            document.getElementById('btnDownload').textContent = t.download;
+
+            if (!document.getElementById('contentWrapper').classList.contains('hidden')) {
+                updateCardContent();
+            }
+            updateTime();
         }
 
         function toggleMusic() {
-            if (isMusicPlaying) { audio.pause(); isMusicPlaying = false; document.getElementById('musicBtn').textContent = "🔇"; } 
-            else { audio.play(); isMusicPlaying = true; document.getElementById('musicBtn').textContent = "🎵"; }
+            if (isMusicPlaying) {
+                audio.pause();
+                isMusicPlaying = false;
+                document.getElementById('musicBtn').textContent = "🔇";
+            } else {
+                audio.play().catch(e => console.log("Музыка ойнатылмады"));
+                isMusicPlaying = true;
+                document.getElementById('musicBtn').textContent = "🎵";
+            }
         }
 
         function openChest() {
-            confetti({ particleCount: 100, spread: 70, origin: { x: 0.75, y: 0.6 }, shapes: ['circle'], colors: ['#FFD700', '#FF0000', '#00FF00'] });
-            const scalar = 3;
-            const emojis = confetti.shapeFromText({ text: '🐴', scalar });
-            const flowers = confetti.shapeFromText({ text: '🌸', scalar });
-            confetti({ particleCount: 15, scalar: 3, spread: 100, origin: { x: 0.75, y: 0.7 }, shapes: [emojis, flowers] });
+            confetti({ particleCount: 200, spread: 100, origin: { x: 0.5, y: 0.6 } });
             document.getElementById('chestWrapper').style.display = 'none';
             document.getElementById('contentWrapper').classList.remove('hidden');
             document.getElementById('controlButtons').classList.remove('hidden');
             updateCardContent();
+            updateTime();
         }
 
         function updateCardContent() {
@@ -356,12 +418,11 @@
             const t = translations[langCode];
             const now = new Date().getTime();
             const data = (now >= targetDate) ? t.arrived : t.coming;
+
             document.getElementById('cityName').textContent = city.name;
             document.getElementById('greetingMsg').innerHTML = data.greet.replace("{name}", `<b style="color:#FFD700">${userName}</b>`);
             document.getElementById('poemBox').textContent = data.poem;
-            document.getElementById('btnNext').textContent = t.ui.next;
-            document.getElementById('btnShare').textContent = t.ui.share;
-            document.getElementById('btnDownload').textContent = t.ui.download;
+            updateTime();
         }
 
         function nextCity() {
@@ -371,19 +432,20 @@
         }
 
         function shareGreeting() {
-            const url = window.location.href.split('?')[0] + "?name=" + encodeURIComponent(userName);
-            if (navigator.share) { navigator.share({ title: '2026 Wish', url: url }); } 
-            else { navigator.clipboard.writeText(url); alert("Copied!"); }
+            const url = window.location.origin + window.location.pathname + "?name=" + encodeURIComponent(userName);
+            if (navigator.share) {
+                navigator.share({ title: '2026 Жаңа жыл құттықтауы', url: url });
+            } else {
+                navigator.clipboard.writeText(url).then(() => alert("Сілтеме көшірілді!"));
+            }
         }
 
         function downloadCard() {
             const captureElement = document.getElementById('captureArea');
-            captureElement.style.background = "linear-gradient(135deg, #0f2027, #2c5364)"; 
-            html2canvas(captureElement, { backgroundColor: null, scale: 2 }).then(canvas => {
-                captureElement.style.background = ""; 
+            html2canvas(captureElement, { scale: 2, useCORS: true, backgroundColor: null }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'NewYear2026_Greeting.png';
-                link.href = canvas.toDataURL();
+                link.download = 'NewYear2026_' + userName + '.png';
+                link.href = canvas.toDataURL('image/png');
                 link.click();
             });
         }
