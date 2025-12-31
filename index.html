@@ -10,7 +10,7 @@
     <meta name="theme-color" content="#0d47a1">
     <link rel="icon" type="image/png" href="icon-192.png">
     
-    <!-- Leaflet (карта) -->
+    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
@@ -20,25 +20,20 @@
     
     <style>
         body { margin: 0; padding: 0; height: 100vh; display: flex; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; background: #1a1a1a; color: white; }
-        /* СОЛ ЖАҚ – КАРТА (60%) */
         #map-container { width: 60%; height: 100%; position: relative; }
         #map { width: 100%; height: 100%; z-index: 1; }
-       
-        /* ОҢ ЖАҚ – ПАНЕЛЬ (40%) */
         #sidebar {
             width: 40%; height: 100%;
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.5); z-index: 2; overflow-y: auto;
         }
-        /* ЖОҒАРҒЫ БАСҚАРУ */
         .top-controls { 
             position: absolute; top: 20px; right: 20px; z-index: 1000; 
             display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; 
             pointer-events: none; 
         }
         .top-controls > * { pointer-events: auto; }
-       
         .icon-btn { 
             background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.3); 
             border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; 
@@ -50,7 +45,6 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.3); 
         }
         h1 { color: #FFD700; text-shadow: 0 0 10px #FF8C00; font-size: 1.8rem; margin-bottom: 20px; text-align: center;}
-       
         .countdown-box { 
             font-family: 'Courier New', monospace; background: rgba(0, 255, 255, 0.1); color: #84ffff; 
             padding: 10px; border-radius: 12px; margin: 10px 0; font-size: 1.1rem; 
@@ -63,12 +57,10 @@
             margin: 10px 0;
             text-shadow: 0 0 5px #84ffff;
         }
-       
         .chest-wrapper { margin: 20px 0; cursor: pointer; animation: float 3s ease-in-out infinite; text-align: center;}
         .chest-icon { font-size: 80px; filter: drop-shadow(0 0 20px gold); }
         .chest-hint { font-size: 0.9rem; color: #aaa; margin-top: 10px; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        
         .card-content { 
             background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 20px; 
             width: 90%; text-align: center; margin-bottom: 10px; 
@@ -76,7 +68,6 @@
         }
         .city-name { font-size: 2rem; color: #4DD0E1; margin: 5px 0; text-shadow: 2px 2px 4px black; }
         .greeting-text { font-size: 1.1rem; line-height: 1.5; color: #fff; margin: 15px 0; }
-       
         .poem-box { 
             background: rgba(0, 40, 0, 0.6); padding: 15px; border-radius: 15px; margin: 15px 0; 
             border-left: 4px solid #FFD700; font-style: italic; white-space: pre-line; 
@@ -164,14 +155,9 @@
                 <button onclick="shareGreeting()" class="main-btn share-btn" id="btnShare">Бөлісу 🔗</button>
             </div>
         </div>
-        <div style="margin-top: 20px; opacity: 0.7;">
-            <a href="https://info.flagcounter.com/YourNewID" target="_blank">
-                <img src="https://s11.flagcounter.com/count2/p2x2/bg_000000/txt_FFFFFF/border_CCCCCC/columns_4/maxflags_12/viewers_0/labels_0/pageviews_0/flags_0/percent_0/" alt="Flag Counter" border="0">
-            </a>
-        </div>
     </div>
     
-    <!-- Фондық музыка (Ислам дініне сай – аспаптық, әнсіз, мерекелік емес, тыныш инструментал) -->
+    <!-- Фондық музыка (Ислам дініне сай – тыныш, вокалсыз инструментал) -->
     <audio id="bgMusic" loop>
         <source src="https://cdn.pixabay.com/download/audio/2023/03/21/audio_8d5d8d5d8f.mp3?filename=relaxing-149407.mp3" type="audio/mp3">
     </audio>
@@ -321,7 +307,7 @@
         function proceedToJourney() {
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('journeyScreen').classList.remove('hidden');
-            toggleMusic(); // Автоматты қосу
+            toggleMusic(); // Музыканы қосу
             const lang = document.getElementById('uiLangSelect').value;
             const cityIndex = destinations.findIndex(d => d.lang === lang);
             if (cityIndex !== -1) currentDestIndex = cityIndex;
@@ -396,7 +382,10 @@
                 isMusicPlaying = false;
                 document.getElementById('musicBtn').textContent = "🔇";
             } else {
-                audio.play().catch(e => console.log("Музыка ойнатылмады"));
+                audio.play().catch(() => {
+                    // Браузер autoplay блоктайды – бір рет басу керек
+                    alert("Музыканы қосу үшін түймені бір рет басыңыз");
+                });
                 isMusicPlaying = true;
                 document.getElementById('musicBtn').textContent = "🎵";
             }
