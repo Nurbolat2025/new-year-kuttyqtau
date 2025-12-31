@@ -2,162 +2,150 @@
 <html lang="kk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Global 2026 Greeting</title>
     
-    <!-- PWA -->
+    <!-- PWA толық қолдау -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0d47a1">
-    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
-    <!-- Конфетти және скриншот -->
+    <!-- Confetti & Screenshot -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     
     <style>
-        body { margin: 0; padding: 0; height: 100vh; display: flex; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; background: #1a1a1a; color: white; }
-        #map-container { width: 60%; height: 100%; position: relative; }
-        #map { width: 100%; height: 100%; z-index: 1; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            height: 100vh; display: flex; flex-direction: column; 
+            font-family: 'Segoe UI', Tahoma, sans-serif; background: #0b1622; color: white; overflow: hidden;
+        }
+        #map { width: 100%; height: 40vh; }
         #sidebar {
-            width: 40%; height: 100%;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.5); z-index: 2; overflow-y: auto;
+            flex: 1; display: flex; flex-direction: column; align-items: center; 
+            justify-content: flex-start; padding: 20px; background: linear-gradient(180deg, #1b263b, #415a77); overflow-y: auto;
         }
         .top-controls { 
-            position: absolute; top: 20px; right: 20px; z-index: 1000; 
-            display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; 
-            pointer-events: none; 
+            position: absolute; top: 10px; right: 10px; z-index: 1000; display: flex; gap: 10px; 
         }
-        .top-controls > * { pointer-events: auto; }
         .icon-btn { 
-            background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.3); 
-            border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; 
+            background: rgba(0,0,0,0.6); color: white; border-radius: 50%; width: 44px; height: 44px; 
+            font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; 
         }
         .lang-select { 
-            background: rgba(255, 255, 255, 0.9); color: #000; border-radius: 20px; padding: 5px 10px; 
-            font-weight: bold; border: none; cursor: pointer; outline: none; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3); 
+            background: rgba(255,255,255,0.95); color: #000; border-radius: 20px; padding: 8px 12px; 
+            font-weight: bold; font-size: 16px; border: none; 
         }
-        h1 { color: #FFD700; text-shadow: 0 0 10px #FF8C00; font-size: 1.8rem; margin-bottom: 20px; text-align: center;}
+        h1 { color: #FFD700; text-shadow: 0 0 15px #FF8C00; font-size: 2.2rem; margin: 20px 0 10px; text-align: center; }
         .countdown-box { 
-            font-family: 'Courier New', monospace; background: rgba(0, 255, 255, 0.1); color: #84ffff; 
-            padding: 10px; border-radius: 12px; margin: 10px 0; font-size: 1.1rem; 
-            border: 1px solid rgba(132, 255, 255, 0.3); text-shadow: 0 0 5px #84ffff; 
-            width: 90%; text-align: center; 
+            background: rgba(0,255,255,0.1); color: #84ffff; padding: 15px; border-radius: 15px; 
+            font-size: 1.3rem; width: 95%; text-align: center; border: 1px solid rgba(132,255,255,0.3); margin-bottom: 20px;
         }
-        .time-info {
-            font-size: 1.1rem;
-            color: #84ffff;
-            margin: 10px 0;
-            text-shadow: 0 0 5px #84ffff;
+        .time-info { 
+            font-size: 1.2rem; color: #84ffff; margin: 15px 0; text-align: center; width: 95%; 
         }
-        .chest-wrapper { margin: 20px 0; cursor: pointer; animation: float 3s ease-in-out infinite; text-align: center;}
-        .chest-icon { font-size: 80px; filter: drop-shadow(0 0 20px gold); }
-        .chest-hint { font-size: 0.9rem; color: #aaa; margin-top: 10px; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .chest-wrapper { margin: 30px 0; cursor: pointer; animation: float 3s ease-in-out infinite; text-align: center; }
+        .chest-icon { font-size: 120px; filter: drop-shadow(0 0 30px gold); }
+        .chest-hint { font-size: 1.1rem; color: #ddd; margin-top: 10px; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
         .card-content { 
-            background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 20px; 
-            width: 90%; text-align: center; margin-bottom: 10px; 
-            border: 1px solid rgba(255,255,255,0.1); 
+            background: rgba(255,255,255,0.1); padding: 25px; border-radius: 25px; width: 95%; 
+            text-align: center; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;
         }
-        .city-name { font-size: 2rem; color: #4DD0E1; margin: 5px 0; text-shadow: 2px 2px 4px black; }
-        .greeting-text { font-size: 1.1rem; line-height: 1.5; color: #fff; margin: 15px 0; }
+        .city-name { font-size: 2.5rem; color: #4DD0E1; margin: 15px 0; text-shadow: 3px 3px 6px black; }
+        .greeting-text { font-size: 1.4rem; line-height: 1.7; margin: 20px 0; }
         .poem-box { 
-            background: rgba(0, 40, 0, 0.6); padding: 15px; border-radius: 15px; margin: 15px 0; 
-            border-left: 4px solid #FFD700; font-style: italic; white-space: pre-line; 
-            color: #fffde7; font-size: 1rem; line-height: 1.6; text-shadow: 1px 1px 2px black; 
-            border: 1px solid rgba(255, 215, 0, 0.2); 
+            background: rgba(0,40,0,0.6); padding: 25px; border-radius: 20px; margin: 25px 0; 
+            border-left: 6px solid #FFD700; font-style: italic; white-space: pre-line; 
+            color: #fffde7; font-size: 1.2rem; line-height: 1.8; 
         }
-        input { width: 85%; padding: 12px; margin: 10px 0; border-radius: 12px; border: none; text-align: center; font-size: 16px; }
+        input { 
+            width: 90%; padding: 18px; margin: 15px 0; border-radius: 20px; border: none; 
+            text-align: center; font-size: 1.2rem; background: rgba(255,255,255,0.2); color: white;
+        }
+        input::placeholder { color: rgba(255,255,255,0.7); }
         .main-btn { 
-            width: 100%; padding: 12px; margin: 5px 0; border-radius: 12px; border: none; 
-            font-size: 16px; font-weight: bold; background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%); 
-            color: #000; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); transition: transform 0.2s; 
+            width: 90%; padding: 18px; margin: 12px 0; border-radius: 20px; border: none; 
+            font-size: 1.3rem; font-weight: bold; background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%); 
+            color: #000; cursor: pointer; box-shadow: 0 8px 25px rgba(255,215,0,0.4); 
         }
-        .main-btn:active { transform: scale(0.95); }
-        .share-btn { background: linear-gradient(135deg, #eee 0%, #ccc 100%); color: #333; }
+        .main-btn:active { transform: scale(0.98); }
         .download-btn { background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); color: white; }
-        .confirm-btn { background: #4CAF50; color: white; width: 45%; margin: 5px;}
-        .deny-btn { background: #F44336; color: white; width: 45%; margin: 5px;}
+        .share-btn { background: linear-gradient(135deg, #778beb 0%, #546de5 100%); color: white; }
         .hidden { display: none !important; }
-        .plane-icon { font-size: 40px; text-shadow: 0 0 10px black; transition: all 1s ease-in-out; }
+        .plane-icon { font-size: 60px; animation: fly 2s ease-in-out infinite; }
+        @keyframes fly { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            #map-container { width: 100%; height: 40%; }
-            #sidebar { width: 100%; height: 60%; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); }
+        /* Десктоп */
+        @media (min-width: 769px) {
+            body { flex-direction: row; }
+            #map { height: 100vh; }
+            #sidebar { width: 40%; }
         }
     </style>
 </head>
 <body>
-    <div id="map-container">
-        <div id="map"></div>
-        <div class="top-controls">
-            <button id="musicBtn" class="icon-btn" onclick="toggleMusic()">🔇</button>
-            <select id="uiLangSelect" class="lang-select" onchange="changeLanguage()">
-                <option value="kk">🇰🇿 Қазақ</option>
-                <option value="ru">🇷🇺 Русский</option>
-                <option value="en">🇺🇸 English</option>
-                <option value="fr">🇫🇷 Français</option>
-                <option value="de">🇩🇪 Deutsch</option>
-                <option value="ar">🇸🇦 العربية</option>
-                <option value="zh">🇨🇳 中文</option>
-                <option value="ko">🇰🇷 한국어</option>
-                <option value="ja">🇯🇵 日本語</option>
-                <option value="es">🇪🇸 Español</option>
-                <option value="mn">🇲🇳 Монгол</option>
-            </select>
-        </div>
+    <div id="map"></div>
+    <div class="top-controls">
+        <button id="musicBtn" class="icon-btn" onclick="toggleMusic()">🔇</button>
+        <select id="uiLangSelect" class="lang-select" onchange="changeLanguage()">
+            <option value="kk">🇰🇿 Қазақ</option>
+            <option value="ru">🇷🇺 Русский</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="de">🇩🇪 Deutsch</option>
+            <option value="ar">🇸🇦 العربية</option>
+            <option value="zh">🇨🇳 中文</option>
+            <option value="ko">🇰🇷 한국어</option>
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="mn">🇲🇳 Монгол</option>
+        </select>
     </div>
+
     <div id="sidebar">
         <div id="loginScreen" style="width: 100%; text-align: center;">
             <h1>🌙 Берекелі 2026</h1>
             <div id="loginCountdown" class="countdown-box">Жүктелуде...</div>
             <p id="appDesc">Адал ниетпен құттықтау жолдаңыз!</p>
-           
-            <div id="confirmNameBlock" class="hidden" style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; margin-top: 10px;">
-                <p id="confirmQuestion" style="font-size: 1.1rem; margin-bottom: 10px;">Сіздің атыңыз <b id="detectedName" style="color: #FFD700;"></b> ба?</p>
-                <div style="display: flex; justify-content: center;">
-                    <button onclick="confirmNameYes()" class="main-btn confirm-btn" id="btnYes">Иә ✅</button>
-                    <button onclick="confirmNameNo()" class="main-btn deny-btn" id="btnNo">Жоқ ❌</button>
-                </div>
-            </div>
+            
             <div id="inputNameBlock">
-                <input type="text" id="nameInput" placeholder="Есіміңіз...">
-                <div id="errorMsg" style="color: #FF5252; display: none; font-size: 0.9em; margin-top: 5px;"></div>
+                <input type="text" id="nameInput" placeholder="Құттықтайтын адамның аты">
+                <div id="errorMsg" style="color: #FF5252; display: none;"></div>
                 <button onclick="startJourney()" class="main-btn" id="btnStart">Бастау 🤲</button>
             </div>
         </div>
+
         <div id="journeyScreen" class="hidden" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
             <div id="captureArea" class="card-content">
-                <div id="mainCountdown" class="countdown-box" style="width: 95%; margin: 0 auto 10px auto;"></div>
+                <div id="mainCountdown" class="countdown-box"></div>
                 <div id="timeInfo" class="time-info"></div>
                 <div id="chestWrapper" class="chest-wrapper" onclick="openChest()">
                     <div class="chest-icon">🎁</div>
-                    <div class="chest-hint" id="chestHint">Сыйлықты ашу үшін басыңыз!</div>
+                    <div class="chest-hint" id="chestHint">Ашу үшін басыңыз!</div>
                 </div>
                 <div id="contentWrapper" class="hidden">
-                    <h2 id="cityName" class="city-name">City</h2>
-                    <div id="greetingMsg" class="greeting-text">...</div>
-                    <div id="poemBox" class="poem-box">...</div>
+                    <h2 id="cityName" class="city-name"></h2>
+                    <div id="greetingMsg" class="greeting-text"></div>
+                    <div id="poemBox" class="poem-box"></div>
                 </div>
             </div>
-           
-            <div id="controlButtons" class="hidden" style="width: 100%;">
-                <button onclick="downloadCard()" class="main-btn download-btn" id="btnDownload">📸 Сурет ретінде жүктеу</button>
-                <button onclick="nextCity()" class="main-btn" id="btnNext">Келесі ел ✈️</button>
-                <button onclick="shareGreeting()" class="main-btn share-btn" id="btnShare">Бөлісу 🔗</button>
+
+            <div id="controlButtons" class="hidden" style="width: 100%; padding: 10px;">
+                <button onclick="downloadCard()" class="main-btn download-btn">📸 Сурет жүктеу</button>
+                <button onclick="nextCity()" class="main-btn">Келесі ел ✈️</button>
+                <button onclick="shareGreeting()" class="main-btn share-btn">Бөлісу 🔗</button>
             </div>
         </div>
     </div>
-    
-    <!-- Фондық музыка (Ислам дініне сай – тыныш, вокалсыз инструментал) -->
+
+    <!-- Фондық музыка (вокалсыз, тыныш инструментал) -->
     <audio id="bgMusic" loop>
         <source src="https://cdn.pixabay.com/download/audio/2023/03/21/audio_8d5d8d5d8f.mp3?filename=relaxing-149407.mp3" type="audio/mp3">
     </audio>
@@ -167,57 +155,57 @@
 
         const translations = {
             kk: {
-                ui: { title: "Берекелі 2026", desc: "Атыңызды енгізіңіз:", ph: "Атыңыз...", start: "Бастау 🤲", next: "Келесі ел ✈️", share: "Бөлісу 🔗", download: "📸 Открытка жүктеу", hint: "Сыйлықты ашу үшін басыңыз!", days: "күн", hours: "сағат", mins: "минут", secs: "секунд", err_char: "Атта қате таңба бар.", err_rep: "Әріп қайталанды.", conf_q: "Сіздің атыңыз {name} па?", yes: "Иә", no: "Жоқ" },
+                ui: { title: "Берекелі 2026", desc: "Атыңызды енгізіңіз:", ph: "Атыңыз...", start: "Бастау 🤲", next: "Келесі ел ✈️", share: "Бөлісу 🔗", download: "📸 Жүктеу", hint: "Ашу үшін басыңыз!", days: "күн", hours: "сағат", mins: "минут", secs: "секунд" },
                 coming: { greet: "Құрметті {name}, келе жатқан Жаңа жылда Алла Тағала екі дүниенің жақсылығын нәсіп етсін!", poem: "Алла қолдап әр ісіңді оң қылсын,\nРизық-несібең адалынан мол болсын.\nКеле жатқан жылда бәрі жаңарып,\nИманыңыз нұрға толар жыл болсын!" },
                 arrived: { greet: "Құрметті {name}, Жаңа жылда Алла әрбір күніңізге береке берсін!", poem: "Жаңа жылда жақсылықтар көп болсын,\nУайым-қайғы ешқашанда жоқ болсын.\nАлла берген ғұмырыңыз мәнді боп,\nДастарханың адал асқа лық толсын!" }
             },
             ru: {
-                ui: { title: "Благословенный 2026", desc: "Введите имя:", ph: "Ваше имя...", start: "Открыть 🤲", next: "Далее ✈️", share: "Поделиться", download: "📸 Скачать", hint: "Откройте сундук!", days: "д", hours: "ч", mins: "м", secs: "с", err_char: "Ошибка в имени.", err_rep: "Повтор букв.", conf_q: "Вас зовут {name}?", yes: "Да", no: "Нет" },
+                ui: { title: "Благословенный 2026", desc: "Введите имя:", ph: "Ваше имя...", start: "Открыть 🤲", next: "Далее ✈️", share: "Поделиться", download: "📸 Скачать", hint: "Откройте сундук!", days: "д", hours: "ч", mins: "м", secs: "с" },
                 coming: { greet: "Уважаемый(ая) {name}, пусть Всевышний дарует благополучие в новом году!", poem: "Пусть Аллах хранит от бед,\nДарит мудрость и совет.\nВ наступающем году,\nОтводит горе и беду." },
                 arrived: { greet: "Уважаемый(ая) {name}, пусть Всевышний наполнит дом баракатом!", poem: "Год пришел, хвала Творцу,\nСчастье пусть придет к лицу.\nМир, покой и благодать,\nБудут дом ваш наполнять." }
             },
             en: {
-                ui: { title: "Blessed 2026", desc: "Enter name:", ph: "Name...", start: "Start 🤲", next: "Next ✈️", share: "Share", download: "📸 Save", hint: "Open chest!", days: "d", hours: "h", mins: "m", secs: "s", err_char: "Invalid name.", err_rep: "Repeated.", conf_q: "Are you {name}?", yes: "Yes", no: "No" },
+                ui: { title: "Blessed 2026", desc: "Enter name:", ph: "Name...", start: "Start 🤲", next: "Next ✈️", share: "Share", download: "📸 Save", hint: "Open chest!", days: "d", hours: "h", mins: "m", secs: "s" },
                 coming: { greet: "Dear {name}, may the Almighty grant you success and halal sustenance!", poem: "May Allah guide you day by day,\nKeep all troubles far away.\nIn the coming year so new,\nMay His blessings be with you." },
                 arrived: { greet: "Dear {name}, may the Almighty fill your life with peace!", poem: "New year is here, bright and clear,\nMay faith in heart be ever near.\nGoodness, health, and halal wealth,\nJoy and peace and spiritual health." }
             },
             fr: {
-                ui: { title: "Béni 2026", desc: "Nom:", ph: "Nom...", start: "Début", next: "Suivant", share: "Partager", download: "📸 Télécharger", hint: "Ouvrir!", days: "j", hours: "h", mins: "m", secs: "s", err_char: "Erreur nom.", err_rep: "Répétition.", conf_q: "Êtes-vous {name}?", yes: "Oui", no: "Non" },
+                ui: { title: "Béni 2026", desc: "Nom:", ph: "Nom...", start: "Début", next: "Suivant", share: "Partager", download: "📸 Télécharger", hint: "Ouvrir!", days: "j", hours: "h", mins: "m", secs: "s" },
                 coming: { greet: "Cher {name}, qu'Allah vous accorde succès et subsistance halal !", poem: "Qu'Allah éclaire votre chemin,\nEt vous protège chaque matin.\nQue cette année soit un festin,\nDe paix et d'amour sans fin." },
                 arrived: { greet: "Cher {name}, qu'Allah remplisse votre vie de paix !", poem: "Le nouvel an est arrivé,\nQue votre foi soit préservée.\nBonheur, santé et pureté,\nPour toute l'éternité." }
             },
             de: {
-                ui: { title: "Gesegnetes 2026", desc: "Name:", ph: "Name...", start: "Start", next: "Weiter", share: "Teilen", download: "📸 Laden", hint: "Öffnen!", days: "T", hours: "Std", mins: "Min", secs: "Sek", err_char: "Fehler.", err_rep: "Wiederholung.", conf_q: "Bist du {name}?", yes: "Ja", no: "Nein" },
+                ui: { title: "Gesegnetes 2026", desc: "Name:", ph: "Name...", start: "Start", next: "Weiter", share: "Teilen", download: "📸 Laden", hint: "Öffnen!", days: "T", hours: "Std", mins: "Min", secs: "Sek" },
                 coming: { greet: "Lieber {name}, möge Allah dir im neuen Jahr Erfolg schenken!", poem: "Möge Allah dich stets leiten,\nIn allen kommenden Zeiten.\nSegen sei in deinem Haus,\nFrieden tagein, tagaus." },
                 arrived: { greet: "Lieber {name}, möge Allah dein Leben mit Frieden füllen!", poem: "Das neue Jahr ist nun hier,\nGlaube sei stets bei dir.\nGesundheit und reines Glück,\nKein Blick mehr zurück." }
             },
             ar: {
-                ui: { title: "2026 مبارك", desc: "الاسم:", ph: "الاسم...", start: "ابدأ", next: "التالي", share: "مشاركة", download: "📸 تحميل", hint: "افتح!", days: "ي", hours: "س", mins: "د", secs: "ث", err_char: "خطأ.", err_rep: "تكرار.", conf_q: "هل أنت {name}؟", yes: "نعم", no: "لا" },
-                coming: { greet: "عزيزي {name}، أسأل الله أن يرزقك الرزق الحلال!", poem: "يا رب بارك في العام الجديد،\nواجعل حياة {name} في عيد.\nبالإيمان والتقوى تزيد،\nورضا الرحمن هو المزيد." },
-                arrived: { greet: "عزيزي {name}، أسأل الله أن يملأ حياتك بالبركة!", poem: "عام جديد أقبل علينا،\nنسأل الله اللطف فينا.\nارزقنا يا رب الجنان،\nواحفظنا من كل شيطان." }
+                ui: { title: "2026 مبارك", desc: "الاسم:", ph: "الاسم...", start: "ابدأ", next: "التالي", share: "مشاركة", download: "📸 تحميل", hint: "افتح!", days: "ي", hours: "س", mins: "د", secs: "ث" },
+                coming: { greet: "عزيزي {name}، أسأل الله أن يرزقك الرزق الحلال!", poem: "يا رب بارك في العام الجديد,\nواجعل حياة {name} في عيد.\nبالإيمان والتقوى تزيد,\nورضا الرحمن هو المزيد." },
+                arrived: { greet: "عزيزي {name}، أسأل الله أن يملأ حياتك بالبركة!", poem: "عام جديد أقبل علينا,\nنسأل الله اللطف فينا.\nارزقنا يا رب الجنان,\nواحفظنا من كل شيطان." }
             },
             zh: {
-                ui: { title: "吉祥 2026", desc: "名字:", ph: "名字...", start: "开始", next: "下一个", share: "分享", download: "📸 下载", hint: "打开!", days: "天", hours: "时", mins: "分", secs: "秒", err_char: "错误", err_rep: "重复", conf_q: "是 {name} 吗?", yes: "是", no: "不" },
-                coming: { greet: "亲爱的 {name}，愿真主赐予您合法的给养！", poem: "愿真主赐福新一年，\n平安喜乐常相伴。\n正道光芒照心间，\n生活美满福无边。" },
-                arrived: { greet: "亲爱的 {name}，愿真主让您的生活充满平安！", poem: "新年已至喜气浓，\n心中信仰时刻同。\n健康财富源合法，\n幸福安康伴一生。" }
+                ui: { title: "吉祥 2026", desc: "名字:", ph: "名字...", start: "开始", next: "下一个", share: "分享", download: "📸 下载", hint: "打开!", days: "天", hours: "时", mins: "分", secs: "秒" },
+                coming: { greet: "亲爱的 {name}，愿真主赐予您合法的给养！", poem: "愿真主赐福新一年,\n平安喜乐常相伴.\n正道光芒照心间,\n生活美满福无边." },
+                arrived: { greet: "亲爱的 {name}，愿真主让您的生活充满平安！", poem: "新年已至喜气浓,\n心中信仰时刻同.\n健康财富源合法,\n幸福安康伴一生." }
             },
             ko: {
-                ui: { title: "축복받은 2026", desc: "이름:", ph: "이름...", start: "시작", next: "다음", share: "공유", download: "📸 다운로드", hint: "열기!", days: "일", hours: "시", mins: "분", secs: "초", err_char: "오류.", err_rep: "반복.", conf_q: "{name} 님?", yes: "네", no: "아니요" },
+                ui: { title: "축복받은 2026", desc: "이름:", ph: "이름...", start: "시작", next: "다음", share: "공유", download: "📸 다운로드", hint: "열기!", days: "일", hours: "시", mins: "분", secs: "초" },
                 coming: { greet: "{name}님, 새해에는 알라의 축복이 가득하시길!", poem: "알라께서 길을 비추시고,\n모든 걱정 사라지게 하소서.\n다가오는 새해에는,\n축복만이 가득하길." },
                 arrived: { greet: "{name}님, 알라께서 평화로 채워주시길!", poem: "새해가 밝아왔네,\n믿음은 굳건하네.\n건강과 행복이,\n당신과 함께하길." }
             },
             ja: {
-                ui: { title: "祝福の2026", desc: "名前:", ph: "名前...", start: "開始", next: "次へ", share: "共有", download: "📸 保存", hint: "開ける!", days: "日", hours: "時", mins: "分", secs: "秒", err_char: "エラー", err_rep: "繰り返し", conf_q: "{name}さん?", yes: "はい", no: "いいえ" },
-                coming: { greet: "{name}さん、アッラーの祝福がありますように！", poem: "アッラーが導き給う、\n悩みは消え去りぬ。\n来るべき新年に、\n幸あれと祈る。" },
-                arrived: { greet: "{name}さん、平安が満たされますように！", poem: "新年が来たりて、\n信仰は深まる。\n健やかで清らかに、\n喜び溢れる日々。" }
+                ui: { title: "祝福の2026", desc: "名前:", ph: "名前...", start: "開始", next: "次へ", share: "共有", download: "📸 保存", hint: "開ける!", days: "日", hours: "時", mins: "分", secs: "秒" },
+                coming: { greet: "{name}さん、アッラーの祝福がありますように！", poem: "アッラーが導き給う,\n悩みは消え去りぬ.\n来るべき新年に,\n幸あれと祈る." },
+                arrived: { greet: "{name}さん、平安が満たされますように！", poem: "新年が来たりて,\n信仰は深まる.\n健やかで清らかに,\n喜び溢れる日々." }
             },
             es: {
-                ui: { title: "Bendito 2026", desc: "Nombre:", ph: "Nombre...", start: "Iniciar", next: "Siguiente", share: "Compartir", download: "📸 Bajar", hint: "¡Abrir!", days: "d", hours: "h", mins: "m", secs: "s", err_char: "Error.", err_rep: "Repetición.", conf_q: "¿Eres {name}?", yes: "Sí", no: "No" },
+                ui: { title: "Bendito 2026", desc: "Nombre:", ph: "Nombre...", start: "Iniciar", next: "Siguiente", share: "Compartir", download: "📸 Bajar", hint: "¡Abrir!", days: "d", hours: "h", mins: "m", secs: "s" },
                 coming: { greet: "Querido {name}, ¡que Alá te conceda éxito!", poem: "Que Allah guíe tu caminar,\nY te aleje de todo mal.\nEn este año que va a empezar,\nMucha paz te va a regalar." },
                 arrived: { greet: "Querido {name}, ¡que Alá llene tu vida de paz!", poem: "El año nuevo ya llegó,\nLa fe en el alma floreció.\nSalud y paz en tu hogar,\nBendiciones sin cesar." }
             },
             mn: {
-                ui: { title: "Ивээлт 2026", desc: "Нэр:", ph: "Нэр...", start: "Эхлэх", next: "Дараах", share: "Хуваалцах", download: "📸 Татах", hint: "Нээх!", days: "өдөр", hours: "цаг", mins: "мин", secs: "сек", err_char: "Алдаа.", err_rep: "Давталт.", conf_q: "{name} мөн үү?", yes: "Тийм", no: "Үгүй" },
+                ui: { title: "Ивээлт 2026", desc: "Нэр:", ph: "Нэр...", start: "Эхлэх", next: "Дараах", share: "Хуваалцах", download: "📸 Татах", hint: "Нээх!", days: "өдөр", hours: "цаг", mins: "мин", secs: "сек" },
                 coming: { greet: "Эрхэм {name}, Аллах танд ивээлээ хайрлаг!", poem: "Аллах таныг ивээг,\nЗовлон бүхнийг мартуулаг.\nИрж буй шинэ жилд,\nАз жаргал дүүрэн байг." },
                 arrived: { greet: "Эрхэм {name}, Аллах таны амьдралыг амар амгалан болгог!", poem: "Шинэ он ирлээ,\nСүсэг бишрэл нэмэгдлээ.\nЭрүүл энх, сайн сайхан,\nҮүрд мөнх байг." }
             }
@@ -247,88 +235,107 @@
             initMap();
             setInterval(updateCountdown, 1000);
             updateCountdown();
-            const urlParams = new URLSearchParams(window.location.search);
-            const sharedName = urlParams.get('name');
-            if (sharedName) {
-                userName = decodeURIComponent(sharedName);
-                document.getElementById('detectedName').textContent = userName;
-                document.getElementById('confirmNameBlock').classList.remove('hidden');
-                document.getElementById('inputNameBlock').classList.add('hidden');
-            }
             changeLanguage();
         };
 
         function initMap() {
-            map = L.map('map', { zoomControl: false }).setView([40, 0], 2);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '',
-                subdomains: 'abcd',
-                maxZoom: 19
-            }).addTo(map);
-
-            const planeIcon = L.divIcon({
-                html: '<div class="plane-icon">✈️</div>',
-                className: '',
-                iconSize: [40, 40],
-                iconAnchor: [20, 20]
-            });
+            map = L.map('map', { zoomControl: false, dragging: true, touchZoom: true }).setView([40, 0], 2);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
+            const planeIcon = L.divIcon({ html: '<div class="plane-icon">✈️</div>', className: '', iconSize: [60, 60] });
             planeMarker = L.marker([51.16, 71.47], { icon: planeIcon }).addTo(map);
-        }
-
-        function validateName(name) {
-            if (/[0-9!@#$%^&*()_+={}\[\]|\\:;"'<>,.?/~`]/.test(name)) return "char";
-            if (/(.)\1{3,}/.test(name)) return "repeat";
-            return "ok";
         }
 
         function startJourney() {
             const inputVal = document.getElementById('nameInput').value.trim();
-            const lang = document.getElementById('uiLangSelect').value;
-            const t = translations[lang].ui;
-            const errorDiv = document.getElementById('errorMsg');
-
-            let tempName = inputVal || "Досым";
-            const status = validateName(tempName);
-            if (status === "char") { errorDiv.textContent = t.err_char; errorDiv.style.display = 'block'; return; }
-            if (status === "repeat") { errorDiv.textContent = t.err_rep; errorDiv.style.display = 'block'; return; }
-
-            userName = tempName;
-            errorDiv.style.display = 'none';
-            proceedToJourney();
-        }
-
-        function confirmNameYes() { proceedToJourney(); }
-        function confirmNameNo() {
-            document.getElementById('confirmNameBlock').classList.add('hidden');
-            document.getElementById('inputNameBlock').classList.remove('hidden');
-            document.getElementById('nameInput').value = "";
-        }
-
-        function proceedToJourney() {
+            userName = inputVal || "Досым";
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('journeyScreen').classList.remove('hidden');
-            toggleMusic(); // Музыканы қосу
-            const lang = document.getElementById('uiLangSelect').value;
-            const cityIndex = destinations.findIndex(d => d.lang === lang);
-            if (cityIndex !== -1) currentDestIndex = cityIndex;
-            flyToCity(destinations[currentDestIndex]);
-            updateTime();
+            toggleMusic();
+            nextCity();
+        }
+
+        function nextCity() {
+            currentDestIndex = (currentDestIndex + 1) % destinations.length;
+            const city = destinations[currentDestIndex];
+            flyToCity(city);
+            updateCardContent(city);
+            updateTime(city.timezone);
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
         }
 
         function flyToCity(city) {
-            const oldLatLng = planeMarker.getLatLng();
+            const old = planeMarker.getLatLng();
             const newLatLng = L.latLng(city.coords[0], city.coords[1]);
             map.flyTo(newLatLng, 5, { duration: 3 });
             planeMarker.setLatLng(newLatLng);
-
             if (flightLine) map.removeLayer(flightLine);
-            flightLine = L.polyline([oldLatLng, newLatLng], { color: '#FFD700', weight: 4, opacity: 0.8, dashArray: '15, 10' }).addTo(map);
+            flightLine = L.polyline([old, newLatLng], { color: '#FFD700', weight: 5, opacity: 0.8 }).addTo(map);
+        }
+
+        function updateCardContent(city) {
+            const lang = city.lang;
+            document.getElementById('uiLangSelect').value = lang;
+            const t = translations[lang];
+            const now = new Date().getTime();
+            const data = (now >= targetDate) ? t.arrived : t.coming;
+
+            document.getElementById('cityName').textContent = city.name;
+            document.getElementById('greetingMsg').innerHTML = data.greet.replace("{name}", `<b style="color:#FFD700">${userName}</b>`);
+            document.getElementById('poemBox').textContent = data.poem;
+            document.getElementById('btnNext').textContent = t.ui.next;
+        }
+
+        function updateTime(timezone) {
+            const now = new Date();
+            const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: false };
+            const timeStr = new Intl.DateTimeFormat('kk', options).format(now);
+            document.getElementById('timeInfo').textContent = `Қазір ${destinations[currentDestIndex].name} сағат: ${timeStr}`;
+        }
+
+        function changeLanguage() {
+            const lang = document.getElementById('uiLangSelect').value;
+            const t = translations[lang].ui;
+
+            document.querySelector('#loginScreen h1').textContent = t.title;
+            document.getElementById('appDesc').textContent = t.desc;
+            document.getElementById('nameInput').placeholder = t.ph;
+            document.getElementById('btnStart').textContent = t.start;
+            document.getElementById('chestHint').textContent = t.hint;
+            document.getElementById('btnNext').textContent = t.next;
+            document.getElementById('btnShare').textContent = t.share;
+            document.getElementById('btnDownload').textContent = t.download;
+
+            if (!document.getElementById('contentWrapper').classList.contains('hidden')) {
+                updateCardContent(destinations[currentDestIndex]);
+            }
+            updateTime(destinations[currentDestIndex].timezone);
+        }
+
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                audio.pause();
+                isMusicPlaying = false;
+                document.getElementById('musicBtn').textContent = "🔇";
+            } else {
+                audio.play().catch(() => {});
+                isMusicPlaying = true;
+                document.getElementById('musicBtn').textContent = "🎵";
+            }
+        }
+
+        function openChest() {
+            confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
+            document.getElementById('chestWrapper').style.display = 'none';
+            document.getElementById('contentWrapper').classList.remove('hidden');
+            document.getElementById('controlButtons').classList.remove('hidden');
+            updateCardContent(destinations[currentDestIndex]);
+            updateTime(destinations[currentDestIndex].timezone);
         }
 
         function updateCountdown() {
             const now = new Date().getTime();
             const distance = targetDate - now;
-            const lang = document.getElementById('uiLangSelect').value;
+            const lang = document.getElementById('uiLangSelect').value || 'kk';
             const t = translations[lang].ui;
 
             if (distance < 0) {
@@ -347,94 +354,20 @@
             document.getElementById('mainCountdown').textContent = timeStr;
         }
 
-        function updateTime() {
-            const currentCity = destinations[currentDestIndex];
-            const timezone = currentCity.timezone;
-            const now = new Date();
-            const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-            const formatter = new Intl.DateTimeFormat(currentLang || 'kk', options);
-            const timeStr = formatter.format(now);
-            document.getElementById('timeInfo').textContent = `Қазір ${currentCity.name} қаласында сағат: ${timeStr}`;
-        }
-
-        function changeLanguage() {
-            const lang = document.getElementById('uiLangSelect').value;
-            const t = translations[lang].ui;
-
-            document.querySelector('#loginScreen h1').textContent = t.title;
-            document.getElementById('appDesc').textContent = t.desc;
-            document.getElementById('nameInput').placeholder = t.ph;
-            document.getElementById('btnStart').textContent = t.start;
-            document.getElementById('chestHint').textContent = t.hint;
-            document.getElementById('btnNext').textContent = t.next;
-            document.getElementById('btnShare').textContent = t.share;
-            document.getElementById('btnDownload').textContent = t.download;
-
-            if (!document.getElementById('contentWrapper').classList.contains('hidden')) {
-                updateCardContent();
-            }
-            updateTime();
-        }
-
-        function toggleMusic() {
-            if (isMusicPlaying) {
-                audio.pause();
-                isMusicPlaying = false;
-                document.getElementById('musicBtn').textContent = "🔇";
-            } else {
-                audio.play().catch(() => {
-                    // Браузер autoplay блоктайды – бір рет басу керек
-                    alert("Музыканы қосу үшін түймені бір рет басыңыз");
-                });
-                isMusicPlaying = true;
-                document.getElementById('musicBtn').textContent = "🎵";
-            }
-        }
-
-        function openChest() {
-            confetti({ particleCount: 200, spread: 100, origin: { x: 0.5, y: 0.6 } });
-            document.getElementById('chestWrapper').style.display = 'none';
-            document.getElementById('contentWrapper').classList.remove('hidden');
-            document.getElementById('controlButtons').classList.remove('hidden');
-            updateCardContent();
-            updateTime();
-        }
-
-        function updateCardContent() {
-            const city = destinations[currentDestIndex];
-            const langCode = city.lang;
-            document.getElementById('uiLangSelect').value = langCode;
-            const t = translations[langCode];
-            const now = new Date().getTime();
-            const data = (now >= targetDate) ? t.arrived : t.coming;
-
-            document.getElementById('cityName').textContent = city.name;
-            document.getElementById('greetingMsg').innerHTML = data.greet.replace("{name}", `<b style="color:#FFD700">${userName}</b>`);
-            document.getElementById('poemBox').textContent = data.poem;
-            updateTime();
-        }
-
-        function nextCity() {
-            currentDestIndex = (currentDestIndex + 1) % destinations.length;
-            flyToCity(destinations[currentDestIndex]);
-            updateCardContent();
-        }
-
         function shareGreeting() {
-            const url = window.location.origin + window.location.pathname + "?name=" + encodeURIComponent(userName);
             if (navigator.share) {
-                navigator.share({ title: '2026 Жаңа жыл құттықтауы', url: url });
+                navigator.share({ title: '2026 Құттықтау', url: window.location.href });
             } else {
-                navigator.clipboard.writeText(url).then(() => alert("Сілтеме көшірілді!"));
+                navigator.clipboard.writeText(window.location.href);
+                alert("Сілтеме көшірілді!");
             }
         }
 
         function downloadCard() {
-            const captureElement = document.getElementById('captureArea');
-            html2canvas(captureElement, { scale: 2, useCORS: true, backgroundColor: null }).then(canvas => {
+            html2canvas(document.getElementById('captureArea'), { scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'NewYear2026_' + userName + '.png';
-                link.href = canvas.toDataURL('image/png');
+                link.download = '2026_greeting.png';
+                link.href = canvas.toDataURL();
                 link.click();
             });
         }
