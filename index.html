@@ -18,75 +18,80 @@
     <style>
         body {
             margin: 0; padding: 0;
-            min-height: 100vh;
-            color: white;
-            text-align: center;
+            height: 100vh;
+            display: flex;
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            overflow-x: hidden;
+            overflow: hidden;
+            background: #1a1a1a;
+            color: white;
+        }
+
+        /* --- 1. СОЛ ЖАҚ: КАРТА (65%) --- */
+        #map-container {
+            width: 65%;
+            height: 100%;
+            position: relative;
+        }
+        #map { width: 100%; height: 100%; z-index: 1; }
+        
+        /* --- 2. ОҢ ЖАҚ: МӘТІНДЕР (35%) --- */
+        #sidebar {
+            width: 35%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: #000;
-        }
-
-        /* --- КАРТА --- */
-        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
-        .overlay { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 15, 30, 0.8); 
-            z-index: 1; pointer-events: none; 
+            padding: 20px;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            z-index: 2;
+            overflow-y: auto;
         }
 
         /* --- ЖОҒАРҒЫ МӘЗІР --- */
         .top-controls {
-            position: fixed; top: 20px; right: 20px; z-index: 1000;
-            display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;
+            position: absolute; top: 20px; right: 20px; z-index: 1000;
+            display: flex; gap: 10px;
         }
         .icon-btn {
-            background: rgba(0,0,0,0.5); color: white;
+            background: rgba(0,0,0,0.6); color: white;
             border: 1px solid rgba(255,255,255,0.3); border-radius: 50%;
-            width: 45px; height: 45px; font-size: 20px; cursor: pointer;
-            backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; font-size: 18px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
         }
         .lang-select {
-            background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 5px 15px;
+            background: rgba(255, 255, 255, 0.9); border-radius: 20px; padding: 5px 10px;
             font-weight: bold; border: none; cursor: pointer; outline: none;
         }
 
-        /* --- ОРТАҢҒЫ КАРТОЧКА --- */
-        .card {
-            position: relative; z-index: 100;
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            padding: 25px; border-radius: 25px;
-            border: 1px solid rgba(255,255,255,0.15);
-            box-shadow: 0 15px 50px rgba(0,0,0,0.8);
-            width: 90%; max-width: 420px;
-            transition: transform 0.3s ease;
-            margin-bottom: 20px;
-        }
-
-        h1 { color: #FFD700; text-shadow: 0 0 15px #FF8C00; font-size: 1.8rem; margin: 10px 0; }
+        /* --- КОНТЕНТ СТИЛІ --- */
+        h1 { color: #FFD700; text-shadow: 0 0 10px #FF8C00; font-size: 1.8rem; margin-bottom: 20px; text-align: center;}
 
         .countdown-box {
             font-family: 'Courier New', monospace;
             background: rgba(0, 255, 255, 0.1); color: #84ffff;
-            padding: 10px; border-radius: 12px; margin: 15px 0;
+            padding: 10px; border-radius: 12px; margin: 10px 0;
             font-size: 1.1rem; border: 1px solid rgba(132, 255, 255, 0.3);
-            text-shadow: 0 0 5px #84ffff;
+            text-shadow: 0 0 5px #84ffff; width: 90%; text-align: center;
         }
 
-        .chest-wrapper { margin: 30px 0; cursor: pointer; animation: float 3s ease-in-out infinite; }
+        .chest-wrapper { margin: 20px 0; cursor: pointer; animation: float 3s ease-in-out infinite; text-align: center;}
         .chest-icon { font-size: 80px; filter: drop-shadow(0 0 20px gold); }
         .chest-hint { font-size: 0.9rem; color: #aaa; margin-top: 10px; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
+        .card-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px; border-radius: 20px; width: 90%;
+            text-align: center; margin-bottom: 10px;
+        }
+
         .city-name { font-size: 2rem; color: #4DD0E1; margin: 5px 0; text-shadow: 2px 2px 4px black; }
-        .greeting-text { font-size: 1.1rem; line-height: 1.5; color: #eee; margin: 15px 0; }
+        .greeting-text { font-size: 1.1rem; line-height: 1.5; color: #fff; margin: 15px 0; }
         
         .poem-box {
-            background: rgba(0, 40, 0, 0.4);
+            background: rgba(0, 40, 0, 0.6);
             padding: 15px; border-radius: 15px;
             margin: 15px 0; border-left: 4px solid #FFD700;
             font-style: italic; white-space: pre-line;
@@ -97,7 +102,7 @@
 
         input { width: 85%; padding: 12px; margin: 10px 0; border-radius: 12px; border: none; text-align: center; font-size: 16px; }
         .main-btn {
-            width: 100%; padding: 14px; margin: 5px 0;
+            width: 100%; padding: 12px; margin: 5px 0;
             border-radius: 12px; border: none; font-size: 16px; font-weight: bold;
             background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%);
             color: #000; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
@@ -105,95 +110,98 @@
         .main-btn:active { transform: scale(0.98); }
         .share-btn { background: linear-gradient(135deg, #eee 0%, #ccc 100%); color: #333; }
         .download-btn { background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); color: white; }
-        .confirm-btn { background: #4CAF50; color: white; margin-right: 5px; width: 45%; }
-        .deny-btn { background: #F44336; color: white; width: 45%; }
+        
+        .confirm-btn { background: #4CAF50; color: white; width: 45%; margin: 5px;}
+        .deny-btn { background: #F44336; color: white; width: 45%; margin: 5px;}
 
         .hidden { display: none !important; }
-        .plane-icon { font-size: 30px; text-shadow: 0 0 10px black; }
+        .plane-icon { font-size: 40px; text-shadow: 0 0 10px black; transition: transform 0.5s; }
 
-        /* Қате туралы хабарлама */
-        #errorMsg { color: #FF5252; font-size: 0.9rem; margin-top: 5px; display: none; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 5px; }
-
-        #stats-container {
-            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-            z-index: 1000; opacity: 0.8; transition: opacity 0.3s;
+        /* Мобильдік адаптация (Телефонда карта үстінде, мәтін астында болады) */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            #map-container { width: 100%; height: 40%; }
+            #sidebar { width: 100%; height: 60%; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); }
         }
-        #stats-container:hover { opacity: 1; }
-        #stats-container img { border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
 
-    <div id="map"></div>
-    <div class="overlay"></div>
+    <div id="map-container">
+        <div id="map"></div>
+        
+        <div class="top-controls">
+            <button id="musicBtn" class="icon-btn" onclick="toggleMusic()">🔇</button>
+            <select id="uiLangSelect" class="lang-select" onchange="changeLanguage()">
+                <option value="kk">🇰🇿 ҚАЗ</option>
+                <option value="ru">🇷🇺 РУС</option>
+                <option value="en">🇺🇸 ENG</option>
+                <option value="zh">🇨🇳 CHN</option>
+                <option value="es">🇪🇸 ESP</option>
+                <option value="fr">🇫🇷 FRA</option>
+                <option value="hi">🇮🇳 HIN</option>
+                <option value="tr">🇹🇷 TUR</option>
+                <option value="ar">🇦🇪 ARA</option>
+            </select>
+        </div>
+    </div>
 
-    <audio id="bgMusic" loop preload="auto">
+    <div id="sidebar">
+        
+        <div id="loginScreen" style="width: 100%; text-align: center;">
+            <h1>🌙 Берекелі 2026</h1>
+            <div id="loginCountdown" class="countdown-box">Жүктелуде...</div>
+            <p id="appDesc">Адал ниетпен құттықтау жолдаңыз!</p>
+            
+            <div id="confirmNameBlock" class="hidden" style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; margin-top: 10px;">
+                <p id="confirmQuestion" style="font-size: 1.1rem; margin-bottom: 10px;">Сіздің атыңыз <b id="detectedName" style="color: #FFD700;"></b> ба?</p>
+                <div style="display: flex; justify-content: center;">
+                    <button onclick="confirmNameYes()" class="main-btn confirm-btn" id="btnYes">Иә ✅</button>
+                    <button onclick="confirmNameNo()" class="main-btn deny-btn" id="btnNo">Жоқ ❌</button>
+                </div>
+            </div>
+
+            <div id="inputNameBlock">
+                <input type="text" id="nameInput" placeholder="Есіміңіз...">
+                <div id="errorMsg" style="color: #FF5252; display: none; font-size: 0.9em; margin-top: 5px;"></div>
+                <button onclick="startJourney()" class="main-btn" id="btnStart">Бастау 🤲</button>
+            </div>
+        </div>
+
+        <div id="journeyScreen" class="hidden" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            
+            <div id="captureArea" class="card-content">
+                <div id="mainCountdown" class="countdown-box" style="width: 95%; margin: 0 auto 10px auto;"></div>
+
+                <div id="chestWrapper" class="chest-wrapper" onclick="openChest()">
+                    <div class="chest-icon">🎁</div>
+                    <div class="chest-hint" id="chestHint">Сыйлықты ашу үшін басыңыз!</div>
+                </div>
+
+                <div id="contentWrapper" class="hidden">
+                    <h2 id="cityName" class="city-name">City</h2>
+                    <div id="greetingMsg" class="greeting-text">...</div>
+                    <div id="poemBox" class="poem-box">...</div>
+                </div>
+            </div>
+            
+            <div id="controlButtons" class="hidden" style="width: 100%;">
+                <button onclick="downloadCard()" class="main-btn download-btn" id="btnDownload">📸 Сурет ретінде жүктеу</button>
+                <button onclick="nextCity()" class="main-btn" id="btnNext">Келесі ел ✈️</button>
+                <button onclick="shareGreeting()" class="main-btn share-btn" id="btnShare">Бөлісу 🔗</button>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; opacity: 0.7;">
+            <a href="https://info.flagcounter.com/YourNewID" target="_blank">
+                <img src="https://s11.flagcounter.com/count2/p2x2/bg_000000/txt_FFFFFF/border_CCCCCC/columns_4/maxflags_12/viewers_0/labels_0/pageviews_0/flags_0/percent_0/" alt="Flag Counter" border="0">
+            </a>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
         <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_1f23348651.mp3" type="audio/mp3">
     </audio>
-
-    <div class="top-controls">
-        <button id="musicBtn" class="icon-btn" onclick="toggleMusic()">🔇</button>
-        <select id="uiLangSelect" class="lang-select" onchange="changeLanguage()">
-            <option value="kk">🇰🇿 ҚАЗ</option>
-            <option value="ru">🇷🇺 РУС</option>
-            <option value="en">🇺🇸 ENG</option>
-            <option value="zh">🇨🇳 CHN</option>
-            <option value="es">🇪🇸 ESP</option>
-            <option value="fr">🇫🇷 FRA</option>
-            <option value="hi">🇮🇳 HIN</option>
-            <option value="tr">🇹🇷 TUR</option>
-            <option value="ar">🇦🇪 ARA</option>
-        </select>
-    </div>
-
-    <div id="loginScreen" class="card">
-        <h1>🌙 Берекелі 2026</h1>
-        <div id="loginCountdown" class="countdown-box">Жүктелуде...</div>
-        <p id="appDesc">Адал ниетпен құттықтау жолдаңыз!</p>
-        
-        <div id="confirmNameBlock" class="hidden" style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px;">
-            <p id="confirmQuestion" style="font-size: 1.1rem; margin-bottom: 10px;">Сіздің атыңыз <b id="detectedName" style="color: #FFD700;"></b> ба?</p>
-            <div style="display: flex; justify-content: space-around;">
-                <button onclick="confirmNameYes()" class="main-btn confirm-btn" id="btnYes">Иә ✅</button>
-                <button onclick="confirmNameNo()" class="main-btn deny-btn" id="btnNo">Жоқ ❌</button>
-            </div>
-        </div>
-
-        <div id="inputNameBlock">
-            <input type="text" id="nameInput" placeholder="Есіміңіз...">
-            <div id="errorMsg"></div>
-            <button onclick="startJourney()" class="main-btn" id="btnStart">Бастау 🤲</button>
-        </div>
-    </div>
-
-    <div id="journeyScreen" class="card hidden">
-        <div id="captureArea" style="padding: 10px; border-radius: 15px;">
-            <div id="mainCountdown" class="countdown-box"></div>
-
-            <div id="chestWrapper" class="chest-wrapper" onclick="openChest()">
-                <div class="chest-icon">🎁</div>
-                <div class="chest-hint" id="chestHint">Сыйлықты ашу үшін басыңыз!</div>
-            </div>
-
-            <div id="contentWrapper" class="hidden">
-                <h2 id="cityName" class="city-name">City</h2>
-                <div id="greetingMsg" class="greeting-text">...</div>
-                <div id="poemBox" class="poem-box">...</div>
-            </div>
-        </div>
-        
-        <div id="controlButtons" class="hidden" style="margin-top: 10px;">
-            <button onclick="downloadCard()" class="main-btn download-btn" id="btnDownload">📸 Сурет ретінде жүктеу</button>
-            <button onclick="nextCity()" class="main-btn" id="btnNext">Келесі ел ✈️</button>
-            <button onclick="shareGreeting()" class="main-btn share-btn" id="btnShare">Бөлісу 🔗</button>
-        </div>
-    </div>
-
-    <div id="stats-container">
-        <a href="https://info.flagcounter.com/YourNewID" target="_blank">
-            <img src="https://s11.flagcounter.com/count2/p2x2/bg_000000/txt_FFFFFF/border_CCCCCC/columns_4/maxflags_12/viewers_0/labels_0/pageviews_0/flags_0/percent_0/" alt="Flag Counter" border="0">
-        </a>
-    </div>
 
     <script>
         const targetDate = new Date("January 1, 2026 00:00:00").getTime();
@@ -201,39 +209,26 @@
         // --- АУДАРМАЛАР ---
         const translations = {
             kk: {
-                ui: { 
-                    title: "Берекелі 2026 Жыл", desc: "Атыңызды енгізіңіз:", ph: "Атыңыз...", start: "Бастау 🤲", next: "Келесі ел ✈️", share: "Бөлісу 🔗", download: "📸 Открытка жүктеу", hint: "Сыйлықты ашу үшін басыңыз! 🎁", days: "күн", hours: "сағ", mins: "мин", secs: "сек",
-                    err_char: "Кешіріңіз, атыңызда қате кеткен сияқты (сандар немесе белгілер бар).", err_rep: "Кешіріңіз, бір әріп тым көп қайталанған сияқты.",
-                    conf_q: "Сіздің атыңыз {name} ба?", yes: "Иә ✅", no: "Жоқ ❌"
-                },
-                // ӨЗГЕРТІЛГЕН ӨЛЕҢДЕР:
+                ui: { title: "Берекелі 2026 Жыл", desc: "Атыңызды енгізіңіз:", ph: "Атыңыз...", start: "Бастау 🤲", next: "Келесі ел ✈️", share: "Бөлісу 🔗", download: "📸 Открытка жүктеу", hint: "Сыйлықты ашу үшін басыңыз! 🎁", days: "күн", hours: "сағ", mins: "мин", secs: "сек", err_char: "Атта қате бар (сан/белгі).", err_rep: "Әріп көп қайталанды.", conf_q: "Сіздің атыңыз {name} ба?", yes: "Иә ✅", no: "Жоқ ❌" },
                 coming: { greet: "Құрметті {name}, келе жатқан Жаңа жылда Алла Тағала екі дүниенің жақсылығын нәсіп етсін!", poem: "Алла қолдап әр ісіңді оң қылсын,\nРизық-несібең адалынан мол болсын.\nКеле жатқан жылда бәрі жаңарып,\nИманыңыз нұрға толар жыл болсын!" },
                 arrived: { greet: "Құрметті {name}, келіп жеткен Жаңа жылда Алла Тағала әрбір күніңізге береке берсін!", poem: "Жаңа жылда жақсылықтар көп болсын,\nУайым-қайғы ешқашанда жоқ болсын.\nАлла берген ғұмырыңыз мәнді боп,\nДастарханың адал асқа лық толсын!" }
             },
             ru: {
-                ui: { 
-                    title: "Благословенный 2026", desc: "Введите имя:", ph: "Ваше имя...", start: "Открыть 🤲", next: "След. страна ✈️", share: "Поделиться 🔗", download: "📸 Скачать открытку", hint: "Нажмите на сундук! 🎁", days: "дн", hours: "ч", mins: "м", secs: "с",
-                    err_char: "Извините, кажется в имени ошибка (есть цифры или символы).", err_rep: "Извините, слишком много повторяющихся букв.",
-                    conf_q: "Вас зовут {name}?", yes: "Да ✅", no: "Нет ❌"
-                },
+                ui: { title: "Благословенный 2026", desc: "Введите имя:", ph: "Ваше имя...", start: "Открыть 🤲", next: "След. страна ✈️", share: "Поделиться 🔗", download: "📸 Скачать", hint: "Нажмите сундук! 🎁", days: "дн", hours: "ч", mins: "м", secs: "с", err_char: "Ошибка в имени.", err_rep: "Повтор букв.", conf_q: "Вас зовут {name}?", yes: "Да ✅", no: "Нет ❌" },
                 coming: { greet: "Уважаемый(ая) {name}, в наступающем году пусть Всевышний дарует вам благополучие!", poem: "Пусть Аллах хранит от бед,\nДарит мудрость и совет.\nВ наступающем году,\nОтводит горе и беду." },
                 arrived: { greet: "Уважаемый(ая) {name}, в наступившем году пусть Всевышний наполнит ваш дом баракатом!", poem: "Год пришел, хвала Творцу,\nСчастье пусть придет к лицу.\nМир, покой и благодать,\nБудут дом ваш наполнять." }
             },
             en: {
-                ui: { 
-                    title: "Blessed 2026", desc: "Enter name:", ph: "Name...", start: "Start 🤲", next: "Next ✈️", share: "Share 🔗", download: "📸 Save Card", hint: "Tap the chest! 🎁", days: "d", hours: "h", mins: "m", secs: "s",
-                    err_char: "Sorry, it seems there is a mistake (digits or symbols).", err_rep: "Sorry, too many repeated letters.",
-                    conf_q: "Is your name {name}?", yes: "Yes ✅", no: "No ❌"
-                },
-                coming: { greet: "Dear {name}, may the Almighty grant you success and halal sustenance in the coming year!", poem: "May Allah guide you day by day,\nKeep all troubles far away.\nIn the coming year so new,\nMay His blessings be with you." },
-                arrived: { greet: "Dear {name}, may the Almighty fill your life with peace and faith in this new year!", poem: "New year is here, bright and clear,\nMay faith in heart be ever near.\nGoodness, health, and halal wealth,\nJoy and peace and spiritual health." }
+                ui: { title: "Blessed 2026", desc: "Enter name:", ph: "Name...", start: "Start 🤲", next: "Next ✈️", share: "Share 🔗", download: "📸 Save Card", hint: "Tap chest! 🎁", days: "d", hours: "h", mins: "m", secs: "s", err_char: "Invalid name.", err_rep: "Repeated chars.", conf_q: "Is your name {name}?", yes: "Yes ✅", no: "No ❌" },
+                coming: { greet: "Dear {name}, may the Almighty grant you success and halal sustenance!", poem: "May Allah guide you day by day,\nKeep all troubles far away.\nIn the coming year so new,\nMay His blessings be with you." },
+                arrived: { greet: "Dear {name}, may the Almighty fill your life with peace and faith!", poem: "New year is here, bright and clear,\nMay faith in heart be ever near.\nGoodness, health, and halal wealth,\nJoy and peace and spiritual health." }
             },
-            zh: { ui: { title: "吉祥 2026", desc: "输入您的名字:", ph: "名字...", start: "开始 🤲", next: "下一个", share: "分享", download: "📸 下载", hint: "点击宝箱!", days: "天", hours: "时", mins: "分", secs: "秒", err_char: "名字有误（包含数字或符号）。", err_rep: "重复字符过多。", conf_q: "您叫 {name} 吗？", yes: "是", no: "不" }, coming: { greet: "亲爱的 {name}，愿真主在来年赐予您合法的给养和成功！", poem: "愿真主赐福新一年，\n平安喜乐常相伴。\n正道光芒照心间，\n生活美满福无边。" }, arrived: { greet: "亲爱的 {name}，愿真主在新的一年里让您的生活充满平安与信仰！", poem: "新年已至喜气浓，\n心中信仰时刻同。\n健康财富源合法，\n幸福安康伴一生。" } },
-            es: { ui: { title: "Bendito 2026", desc: "Nombre:", ph: "Nombre...", start: "Empezar", next: "Siguiente", share: "Compartir", download: "📸 Descargar", hint: "¡Toca el cofre!", days: "d", hours: "h", mins: "m", secs: "s", err_char: "Error en el nombre (dígitos o símbolos).", err_rep: "Demasiadas letras repetidas.", conf_q: "¿Eres {name}?", yes: "Sí", no: "No" }, coming: { greet: "Querido/a {name}, ¡que Alá te bendiga!", poem: "Que Allah guíe tu caminar,\nY te aleje de todo mal.\nEn este año que va a empezar,\nMucha paz te va a regalar." }, arrived: { greet: "Querido/a {name}, ¡feliz año nuevo!", poem: "El año nuevo ya llegó,\nLa fe en el alma floreció.\nSalud y paz en tu hogar,\nBendiciones sin cesar." } },
-            fr: { ui: { title: "Béni 2026", desc: "Nom:", ph: "Nom...", start: "Commencer", next: "Suivant", share: "Partager", download: "📸 Télécharger", hint: "Appuyez sur le coffre!", days: "j", hours: "h", mins: "m", secs: "s", err_char: "Erreur dans le nom (chiffres ou symboles).", err_rep: "Trop de lettres répétées.", conf_q: "Est-ce vous, {name}?", yes: "Oui", no: "Non" }, coming: { greet: "Cher {name}, qu'Allah vous bénisse !", poem: "Qu'Allah éclaire votre chemin,\nEt vous protège chaque matin.\nQue cette année soit un festin,\nDe paix et d'amour sans fin." }, arrived: { greet: "Cher {name}, bonne année !", poem: "Le nouvel an est arrivé,\nQue votre foi soit préservée.\nBonheur, santé et pureté,\nPour toute l'éternité." } },
-            hi: { ui: { title: "Mubarak 2026", desc: "Naam:", ph: "Naam...", start: "Shuru", next: "Agla", share: "Share", download: "📸 Save", hint: "Sandook kholein!", days: "d", hours: "h", mins: "m", secs: "s", err_char: "Naam mein ghalti hai (digits/symbols).", err_rep: "Akshar bar-bar aa rahe hain.", conf_q: "Kya aap {name} hain?", yes: "Haan", no: "Nahi" }, coming: { greet: "Pyare {name}, Allah aap par rehmat kare!", poem: "Allah ki rehmat barse aap par,\nKhushiyon se bhar jaye ghar.\nHar mushkil ho jaye aasan,\nNaye saal mein mile sukoon-o-aman." }, arrived: { greet: "Pyare {name}, naya saal mubarak!", poem: "Naya saal aaya hai roshan hokar,\nDil mein iman rahe hamesha jagmagakar.\nAcchai, sehat aur halal kamai,\nKhushi aur aman ki ho bharpayi." } },
-            tr: { ui: { title: "Bereketli 2026", desc: "Adınız:", ph: "Adınız...", start: "Başla", next: "Sonraki", share: "Paylaş", download: "📸 İndir", hint: "Sandığa tıkla!", days: "g", hours: "s", mins: "dk", secs: "sn", err_char: "İsimde hata var (rakam veya sembol).", err_rep: "Çok fazla tekrarlanan harf.", conf_q: "Adınız {name} mı?", yes: "Evet", no: "Hayır" }, coming: { greet: "Sevgili {name}, Allah razı olsun!", poem: "Rabbim yolunu açık etsin,\nHer türlü dertten seni korusun.\nYeni yılda tüm duaların,\nHayırlısıyla kabul olsun." }, arrived: { greet: "Sevgili {name}, yeni yılınız mübarek olsun!", poem: "Yeni yıl geldi hoş geldi,\nGönlüne iman dolsun ebedi.\nRabbimden dilerim saadet,\nHayatın olsun hep selamet." } },
-            ar: { ui: { title: "عام مبارك 2026", desc: "الاسم:", ph: "الاسم...", start: "ابدأ", next: "التالي", share: "مشاركة", download: "📸 تحميل", hint: "اضغط الصندوق!", days: "ي", hours: "س", mins: "د", secs: "ث", err_char: "خطأ في الاسم (أرقام أو رموز).", err_rep: "أحرف مكررة كثيرا.", conf_q: "هل أنت {name}؟", yes: "نعم", no: "لا" }, coming: { greet: "عزيزي {name}، بارك الله فيك!", poem: "يا رب بارك في العام الجديد،\nواجعل حياة {name} في عيد.\nبالإيمان والتقوى تزيد،\nورضا الرحمن هو المزيد." }, arrived: { greet: "عزيزي {name}، عام سعيد!", poem: "عام جديد أقبل علينا،\nنسأل الله اللطف فينا.\nارزقنا يا رب الجنان،\nواحفظنا من كل شيطان." } }
+            zh: { ui: { title: "吉祥 2026", desc: "输入名字:", ph: "名字...", start: "开始 🤲", next: "下一个", share: "分享", download: "📸 下载", hint: "点击宝箱!", days: "天", hours: "时", mins: "分", secs: "秒", err_char: "名字有误。", err_rep: "重复字符。", conf_q: "您叫 {name} 吗？", yes: "是", no: "不" }, coming: { greet: "亲爱的 {name}，愿真主赐福！", poem: "愿真主赐福新一年，\n平安喜乐常相伴。\n正道光芒照心间，\n生活美满福无边。" }, arrived: { greet: "亲爱的 {name}，新年快乐！", poem: "新年已至喜气浓，\n心中信仰时刻同。\n健康财富源合法，\n幸福安康伴一生。" } },
+            es: { ui: { title: "Bendito 2026", desc: "Nombre:", ph: "Nombre...", start: "Empezar", next: "Siguiente", share: "Compartir", download: "📸 Descargar", hint: "¡Toca el cofre!", days: "d", hours: "h", mins: "m", secs: "s", err_char: "Error nombre.", err_rep: "Repetición.", conf_q: "¿Eres {name}?", yes: "Sí", no: "No" }, coming: { greet: "Querido/a {name}, ¡que Alá te bendiga!", poem: "Que Allah guíe tu caminar,\nY te aleje de todo mal.\nEn este año que va a empezar,\nMucha paz te va a regalar." }, arrived: { greet: "Querido/a {name}, ¡feliz año nuevo!", poem: "El año nuevo ya llegó,\nLa fe en el alma floreció.\nSalud y paz en tu hogar,\nBendiciones sin cesar." } },
+            fr: { ui: { title: "Béni 2026", desc: "Nom:", ph: "Nom...", start: "Commencer", next: "Suivant", share: "Partager", download: "📸 Télécharger", hint: "Appuyez coffre!", days: "j", hours: "h", mins: "m", secs: "s", err_char: "Erreur nom.", err_rep: "Répétition.", conf_q: "Est-ce vous, {name}?", yes: "Oui", no: "Non" }, coming: { greet: "Cher {name}, qu'Allah vous bénisse !", poem: "Qu'Allah éclaire votre chemin,\nEt vous protège chaque matin.\nQue cette année soit un festin,\nDe paix et d'amour sans fin." }, arrived: { greet: "Cher {name}, bonne année !", poem: "Le nouvel an est arrivé,\nQue votre foi soit préservée.\nBonheur, santé et pureté,\nPour toute l'éternité." } },
+            hi: { ui: { title: "Mubarak 2026", desc: "Naam:", ph: "Naam...", start: "Shuru", next: "Agla", share: "Share", download: "📸 Save", hint: "Sandook kholein!", days: "d", hours: "h", mins: "m", secs: "s", err_char: "Naam ghalti.", err_rep: "Repeat.", conf_q: "Kya aap {name} hain?", yes: "Haan", no: "Nahi" }, coming: { greet: "Pyare {name}, Allah aap par rehmat kare!", poem: "Allah ki rehmat barse aap par,\nKhushiyon se bhar jaye ghar.\nHar mushkil ho jaye aasan,\nNaye saal mein mile sukoon-o-aman." }, arrived: { greet: "Pyare {name}, naya saal mubarak!", poem: "Naya saal aaya hai roshan hokar,\nDil mein iman rahe hamesha jagmagakar.\nAcchai, sehat aur halal kamai,\nKhushi aur aman ki ho bharpayi." } },
+            tr: { ui: { title: "Bereketli 2026", desc: "Adınız:", ph: "Adınız...", start: "Başla", next: "Sonraki", share: "Paylaş", download: "📸 İndir", hint: "Sandığa tıkla!", days: "g", hours: "s", mins: "dk", secs: "sn", err_char: "İsim hatalı.", err_rep: "Tekrar.", conf_q: "Adınız {name} mı?", yes: "Evet", no: "Hayır" }, coming: { greet: "Sevgili {name}, Allah razı olsun!", poem: "Rabbim yolunu açık etsin,\nHer türlü dertten seni korusun.\nYeni yılda tüm duaların,\nHayırlısıyla kabul olsun." }, arrived: { greet: "Sevgili {name}, yeni yılınız mübarek olsun!", poem: "Yeni yıl geldi hoş geldi,\nGönlüne iman dolsun ebedi.\nRabbimden dilerim saadet,\nHayatın olsun hep selamet." } },
+            ar: { ui: { title: "عام مبارك 2026", desc: "الاسم:", ph: "الاسم...", start: "ابدأ", next: "التالي", share: "مشاركة", download: "📸 تحميل", hint: "اضغط الصندوق!", days: "ي", hours: "س", mins: "د", secs: "ث", err_char: "خطأ الاسم.", err_rep: "تكرار.", conf_q: "هل أنت {name}؟", yes: "نعم", no: "لا" }, coming: { greet: "عزيزي {name}، بارك الله فيك!", poem: "يا رب بارك في العام الجديد،\nواجعل حياة {name} في عيد.\nبالإيمان والتقوى تزيد،\nورضا الرحمن هو المزيد." }, arrived: { greet: "عزيزي {name}، عام سعيد!", poem: "عام جديد أقبل علينا،\nنسأل الله اللطف فينا.\nارزقنا يا رب الجنان،\nواحفظنا من كل شيطان." } }
         };
 
         const destinations = [
@@ -248,7 +243,7 @@
             { name: "Tashkent 🇺🇿", coords: [41.29, 69.24], lang: "ru" }
         ];
 
-        let map, planeMarker;
+        let map, planeMarker, flightLine;
         let currentDestIndex = 0;
         let userName = "Досым";
         let isMusicPlaying = false;
@@ -268,17 +263,20 @@
                 document.getElementById('detectedName').textContent = sharedName;
                 userName = sharedName;
             }
-
             changeLanguage();
         };
 
         function initMap() {
-            map = L.map('map', { zoomControl: false }).setView([51.16, 71.47], 4);
+            // Картаны ортаға қоямыз
+            map = L.map('map', { zoomControl: false }).setView([30, 0], 2);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '', subdomains: 'abcd', maxZoom: 19 }).addTo(map);
-            const planeIcon = L.divIcon({ html: '<div style="font-size: 30px; transform: rotate(-45deg);">✈️</div>', className: 'plane-icon', iconSize: [30, 30], iconAnchor: [15, 15] });
+            
+            // Ұшақ белгісі
+            const planeIcon = L.divIcon({ html: '<div style="font-size: 40px; transform: rotate(0deg);">✈️</div>', className: 'plane-icon', iconSize: [40, 40], iconAnchor: [20, 20] });
             planeMarker = L.marker([51.16, 71.47], {icon: planeIcon}).addTo(map);
         }
 
+        // --- ВАЛИДАЦИЯ ---
         function validateName(name) {
             const invalidChars = /[0-9!@#$%^&*()_+={}\[\]|\\:;"'<>,.?/~`]/;
             if (invalidChars.test(name)) return "char";
@@ -292,30 +290,18 @@
             const t = translations[lang].ui;
             const errorDiv = document.getElementById('errorMsg');
 
-            if (!inputVal) {
-                userName = "Досым";
-            } else {
+            if (!inputVal) { userName = "Досым"; } 
+            else {
                 const status = validateName(inputVal);
-                if (status === "char") {
-                    errorDiv.textContent = t.err_char;
-                    errorDiv.style.display = 'block';
-                    return; 
-                } else if (status === "repeat") {
-                    errorDiv.textContent = t.err_rep;
-                    errorDiv.style.display = 'block';
-                    return; 
-                }
+                if (status === "char") { errorDiv.textContent = t.err_char; errorDiv.style.display = 'block'; return; }
+                else if (status === "repeat") { errorDiv.textContent = t.err_rep; errorDiv.style.display = 'block'; return; }
                 userName = inputVal;
             }
-
             errorDiv.style.display = 'none';
             proceedToJourney();
         }
 
-        function confirmNameYes() {
-            proceedToJourney();
-        }
-
+        function confirmNameYes() { proceedToJourney(); }
         function confirmNameNo() {
             document.getElementById('confirmNameBlock').classList.add('hidden');
             document.getElementById('inputNameBlock').classList.remove('hidden');
@@ -325,15 +311,34 @@
         function proceedToJourney() {
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('journeyScreen').classList.remove('hidden');
-            if(!isMusicPlaying) toggleMusic();
+            
+            // Музыканы қосу
+            if (!isMusicPlaying) {
+                audio.play().then(() => { isMusicPlaying = true; document.getElementById('musicBtn').textContent = "🎵"; })
+                     .catch(e => console.log(e));
+            }
 
+            // Бастапқы нүктеге бару
             const lang = document.getElementById('uiLangSelect').value;
             const cityIndex = destinations.findIndex(d => d.lang === lang);
             if(cityIndex !== -1) currentDestIndex = cityIndex;
+            
+            flyToCity(destinations[currentDestIndex]);
+        }
 
-            const city = destinations[currentDestIndex];
-            map.flyTo(city.coords, 5, { duration: 2.5 });
-            planeMarker.setLatLng(city.coords);
+        function flyToCity(city) {
+            const oldLatLng = planeMarker.getLatLng();
+            const newLatLng = city.coords;
+
+            // 1. Картаны жылжыту
+            map.flyTo(newLatLng, 4, { duration: 2.5 });
+
+            // 2. Ұшақты жылжыту (анимация жоқ, картамен бірге барады)
+            planeMarker.setLatLng(newLatLng);
+
+            // 3. СЫЗЫҚ СЫЗУ (Flight Path)
+            if (flightLine) map.removeLayer(flightLine);
+            flightLine = L.polyline([oldLatLng, newLatLng], {color: 'red', weight: 3, opacity: 0.7, dashArray: '10, 10'}).addTo(map);
         }
 
         function updateCountdown() {
@@ -343,16 +348,14 @@
             const t = translations[lang].ui;
 
             if (distance < 0) {
-                const msg = "🎉 2026!";
-                document.getElementById('loginCountdown').textContent = msg;
-                document.getElementById('mainCountdown').textContent = msg;
+                document.getElementById('loginCountdown').textContent = "🎉 2026!";
+                document.getElementById('mainCountdown').textContent = "🎉 2026!";
             } else {
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
                 const timeStr = `⏳ ${days}${t.days} ${hours}${t.hours} ${minutes}${t.mins} ${seconds}${t.secs}`;
-                
                 document.getElementById('loginCountdown').textContent = timeStr;
                 document.getElementById('mainCountdown').textContent = timeStr;
             }
@@ -367,7 +370,6 @@
             document.getElementById('nameInput').placeholder = t.ph;
             document.getElementById('btnStart').textContent = t.start;
             document.getElementById('chestHint').textContent = t.hint;
-
             document.getElementById('confirmQuestion').innerHTML = t.conf_q.replace("{name}", `<b style="color:#FFD700">${userName}</b>`);
             document.getElementById('btnYes').textContent = t.yes;
             document.getElementById('btnNo').textContent = t.no;
@@ -416,8 +418,7 @@
         function nextCity() {
             currentDestIndex = (currentDestIndex + 1) % destinations.length;
             const city = destinations[currentDestIndex];
-            map.flyTo(city.coords, 5, { duration: 2.5 });
-            planeMarker.setLatLng(city.coords);
+            flyToCity(city);
             updateCardContent();
         }
 
@@ -429,9 +430,9 @@
 
         function downloadCard() {
             const captureElement = document.getElementById('captureArea');
-            captureElement.style.background = "rgba(0, 20, 40, 0.9)"; 
+            captureElement.style.background = "linear-gradient(135deg, #0f2027, #203a43, #2c5364)"; // Суретке әдемі фон беру
             html2canvas(captureElement, { backgroundColor: null, scale: 2 }).then(canvas => {
-                captureElement.style.background = ""; 
+                captureElement.style.background = ""; // Қалпына келтіру
                 const link = document.createElement('a');
                 link.download = 'NewYear2026_Greeting.png';
                 link.href = canvas.toDataURL();
